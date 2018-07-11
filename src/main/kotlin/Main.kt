@@ -16,7 +16,8 @@ object Main {
         }
 
 
-        val includeAll = args[0].contains("i")
+        val includeAll  = args[0].contains("i")
+        val getLatest   = args[0].contains("l")
 
         if (args.size < 2) {
             println("ERROR: A last check timestamp is required")
@@ -35,7 +36,7 @@ object Main {
         val shows = Array(args.size-2){ args[it+2] }
 
 
-        val result = checkForUpdates(lastCheck, shows, includeAll)
+        val result = checkForUpdates(lastCheck, shows, includeAll,getLatest)
 
         result.forEach {printEpisode(it,options)}
 

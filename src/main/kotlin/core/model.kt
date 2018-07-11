@@ -124,7 +124,7 @@ fun printEpisode(episode:String,options:String="A"){
     println(newObject.toString())
 }
 
-fun checkForUpdates(lastCheck:Long,shows:Array<String>,includeAll:Boolean=false):MutableList<String>{
+fun checkForUpdates(lastCheck:Long,shows:Array<String>,includeAll:Boolean=false,getLatest:Boolean=false):MutableList<String>{
     val result = mutableListOf<String>()
 
     shows.forEach {
@@ -133,7 +133,7 @@ fun checkForUpdates(lastCheck:Long,shows:Array<String>,includeAll:Boolean=false)
 
         val episodeString = getLatestEpisode(seriesPage)
 
-        val isNewEpisode = isNew(episodeString,lastCheck)
+        val isNewEpisode = isNew(episodeString,lastCheck) || getLatest
 
         if (includeAll) {
             result.add(if (isNewEpisode) episodeString else "")
