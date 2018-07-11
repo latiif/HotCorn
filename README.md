@@ -33,6 +33,7 @@ This will yield an error message because you have to provide arguments, more on 
 *Options*
 When using Hotcorn commandline tool, you first need to pass in the mandatory options flags, at least one of them must be there.
 * `i` include all: This flag asks Hotcorn to print out a new line for every tvshow nomatter if it has updates or not, if a tvshow doesn't have a new update a blank line will be printed out.
+* `l` get latest: This flag asks Hotcorn retrieve the latest episode of the shows regardless of the last check time.
 * `t` torrent: Prints a magnet torrent link to the latest episode (usually the best one).
 * `D` Downloads: Prints an array of all torrent magnet links.
 * `P` First-aired Epoch: Prints the unixtime when the episode was first aired.
