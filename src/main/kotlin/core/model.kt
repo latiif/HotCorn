@@ -10,28 +10,28 @@ import java.util.*
 const val SERIES_INFO = "https://tv-v2.api-fetch.website/show/"
 const val SERIES_SEARCH = "https://tv-v2.api-fetch.website/shows/1?sort=rating&order=-1&genre=all&keywords="
 
+const val epsilon = 43200 //half a day
 
 
 fun InputStream.getAll() = bufferedReader().use { it.readText() }
 
-fun parametrize(str:String)=str.replace("_","%20",true)
+fun parametrize(str: String) = str.replace("_", "%20", true)
 
 
+fun getSeriesViaId(id: String) = Jsoup.connect(SERIES_INFO + id).ignoreContentType(true).execute().body()
 
-fun getSeriesViaId(id:String)= Jsoup.connect(SERIES_INFO+id).ignoreContentType(true).execute().body()
-
-fun getSeriesViaKeyword(keyword:String):String{
-    val json = Jsoup.connect(SERIES_SEARCH+ parametrize(keyword)).ignoreContentType(true).execute().body()
+fun getSeriesViaKeyword(keyword: String): String {
+    val json = Jsoup.connect(SERIES_SEARCH + parametrize(keyword)).ignoreContentType(true).execute().body()
     if (json.equals("null")) return "null"
-    val jsonElement=JsonParser().parse(json)
+    val jsonElement = JsonParser().parse(json)
 
-    var jobject= jsonElement.asJsonArray
-    if (jobject.size()==0) return "null"
+    var jobject = jsonElement.asJsonArray
+    if (jobject.size() == 0) return "null"
     return getSeriesViaId(jobject[0].asJsonObject.get("imdb_id").asString)
 }
 
 
-fun getEpisodes(json:String):String{
+fun getEpisodes(json: String): String {
     val jelement = JsonParser().parse(json)
     var jobject = jelement.asJsonObject
 
@@ -40,7 +40,7 @@ fun getEpisodes(json:String):String{
 }
 
 
-fun getLatestEpisode(json: String):String{
+fun getLatestEpisode(json: String): String {
     if (json.equals("null")) return "null"
 
     val jelement = JsonParser().parse(json)
@@ -48,14 +48,14 @@ fun getLatestEpisode(json: String):String{
 
     val jarray = jobject.getAsJsonArray("episodes")
 
-    var maxEpoch:Long=0
-    var latestEpisode:String=""
+    var maxEpoch: Long = 0
+    var latestEpisode: String = ""
     jarray.forEach {
-        val episodeEpoch:Long = it.asJsonObject.get("first_aired").asLong
+        val episodeEpoch: Long = it.asJsonObject.get("first_aired").asLong
 
-        if (episodeEpoch>maxEpoch){
-            maxEpoch=episodeEpoch
-            latestEpisode=it.toString()
+        if (episodeEpoch > maxEpoch) {
+            maxEpoch = episodeEpoch
+            latestEpisode = it.toString()
         }
     }
 
@@ -63,7 +63,7 @@ fun getLatestEpisode(json: String):String{
 }
 
 
-fun isNew(episode:String,lastCheck: Long):Boolean{
+fun isNew(episode: String, lastCheck: Long): Boolean {
 
     if (episode.equals("null")) return false
 
@@ -73,12 +73,14 @@ fun isNew(episode:String,lastCheck: Long):Boolean{
 
     val episodeEpoch = jobject.get("first_aired").asLong
 
-    return episodeEpoch>lastCheck
+    return (episodeEpoch + epsilon) > lastCheck
 }
 
 
-fun printEpisode(episode:String,options:String="A"){
-    if (episode.equals("null") || episode.equals("")) {println(""); return}
+fun printEpisode(episode: String, options: String = "A") {
+    if (episode.equals("null") || episode.equals("")) {
+        println(""); return
+    }
 
     val getTorrent = options.contains("t")
     val printAll = options.contains("A")
@@ -95,15 +97,15 @@ fun printEpisode(episode:String,options:String="A"){
     val jobject = jelement.getAsJsonObject()
     val episodeEpoch = jobject.get("first_aired").asLong
 
-    val netDate = Date(episodeEpoch* 1000)
+    val netDate = Date(episodeEpoch * 1000)
 
-    if (getTorrent){
+    if (getTorrent) {
         println(jobject.get("torrents").asJsonObject.get("0").asJsonObject.get("url").asString)
         return
     }
 
-    if (printAll){
-        jobject.addProperty("first_aired_utc",netDate.toString());
+    if (printAll) {
+        jobject.addProperty("first_aired_utc", netDate.toString());
 
         println(jobject.toString())
         return
@@ -111,29 +113,29 @@ fun printEpisode(episode:String,options:String="A"){
 
     val newObject = JsonObject()
 
-    if (printTorrents) newObject.add("torrents",jobject.get("torrents"))
-    if (printFirstAiredEpoch) newObject.add("first_aired",jobject.get("first_aired"))
-    if (printFirstAired) newObject.addProperty("first_aired_utc",netDate.toString())
+    if (printTorrents) newObject.add("torrents", jobject.get("torrents"))
+    if (printFirstAiredEpoch) newObject.add("first_aired", jobject.get("first_aired"))
+    if (printFirstAired) newObject.addProperty("first_aired_utc", netDate.toString())
 
-    if (printOverview) newObject.add("overview",jobject.get("overview"))
-    if (printTitle) newObject.add("title",jobject.get("title"))
-    if (printEpisode) newObject.add("episode",jobject.get("episode"))
-    if (printSeason) newObject.add("season",jobject.get("season"))
+    if (printOverview) newObject.add("overview", jobject.get("overview"))
+    if (printTitle) newObject.add("title", jobject.get("title"))
+    if (printEpisode) newObject.add("episode", jobject.get("episode"))
+    if (printSeason) newObject.add("season", jobject.get("season"))
 
 
     println(newObject.toString())
 }
 
-fun checkForUpdates(lastCheck:Long,shows:Array<String>,includeAll:Boolean=false,getLatest:Boolean=false):MutableList<String>{
+fun checkForUpdates(lastCheck: Long, shows: Array<String>, includeAll: Boolean = false, getLatest: Boolean = false): MutableList<String> {
     val result = mutableListOf<String>()
 
     shows.forEach {
         var seriesPage = getSeriesViaId(it)
-        if (seriesPage.equals("null")) seriesPage= getSeriesViaKeyword(it)
+        if (seriesPage.equals("null")) seriesPage = getSeriesViaKeyword(it)
 
         val episodeString = getLatestEpisode(seriesPage)
 
-        val isNewEpisode = isNew(episodeString,lastCheck) || getLatest
+        val isNewEpisode = isNew(episodeString, lastCheck) || getLatest
 
         if (includeAll) {
             result.add(if (isNewEpisode) episodeString else "")

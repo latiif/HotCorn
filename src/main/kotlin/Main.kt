@@ -8,16 +8,16 @@ object Main {
     @JvmStatic
     fun main(args: Array<String>) {
 
-        val options = if (args.size>1)
-             args[0]
+        val options = if (args.size > 1)
+            args[0]
         else {
             println("ERROR: Arguments expected")
             return
         }
 
 
-        val includeAll  = args[0].contains("i")
-        val getLatest   = args[0].contains("l")
+        val includeAll = args[0].contains("i")
+        val getLatest = args[0].contains("l")
 
         if (args.size < 2) {
             println("ERROR: A last check timestamp is required")
@@ -33,12 +33,12 @@ object Main {
             return
         }
 
-        val shows = Array(args.size-2){ args[it+2] }
+        val shows = Array(args.size - 2) { args[it + 2] }
 
 
-        val result = checkForUpdates(lastCheck, shows, includeAll,getLatest)
+        val result = checkForUpdates(lastCheck, shows, includeAll, getLatest)
 
-        result.forEach {printEpisode(it,options)}
+        result.forEach { printEpisode(it, options) }
 
     }
 }
