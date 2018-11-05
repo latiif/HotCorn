@@ -28,7 +28,7 @@ This will yield an error message because you have to provide arguments, more on 
 
 **Synopsis**
 
-`java -jar Hotcorn.jar <option flags> <unix epoch> "<tv show name or imdb code>"[<tv show name or imdb code> ...]`
+`java -jar Hotcorn.jar <option flags> <unix epoch> [-epsilon <time in hours>] "<tv show name or imdb code>"[<tv show name or imdb code> ...]`
 
 *Options*
 When using Hotcorn commandline tool, you first need to pass in the mandatory options flags, at least one of them must be there.
@@ -47,6 +47,10 @@ When using Hotcorn commandline tool, you first need to pass in the mandatory opt
 *Unix epoch*
 This argument represents the timestamp at which the latest check for updates was performed.
 Pass in 0 to get the latest episode.
+
+*Epsilon*
+**OPTIONAL - DEFAULT VALUE = 0** 
+Due to the fact that popcorn shows are not uploaded once they are aired and that the tool looks at the first aired data to determine wheter an episode is new or not, an optional *epsilon* time _in hours_ is added to the *unix epoch* to allow for retrieval of episodes that aired *epsilon* hours ago.
 
 *TV Shows*
 For this argument you can either pass in the IMDB id for the show, or ask Hotcorn to look it up using keywords.

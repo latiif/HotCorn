@@ -33,12 +33,19 @@ object Main {
             return
         }
 
-        val shows = Array(args.size - 2) { args[it + 2] }
+        var shift = 2
+        var epsilon = 0
+        val epsilonIndex = args.lastIndexOf("-epsilon");
+        if (epsilonIndex != -1) {
+            epsilon = args[epsilonIndex+1].toInt()
+            shift = 4
+        }
+
+        val shows = Array(args.size - shift) { args[it + shift] }
 
 
-        val result = checkForUpdates(lastCheck, shows, includeAll, getLatest)
+        val result = checkForUpdates(lastCheck,epsilon, shows, includeAll, getLatest)
 
         result.forEach { printEpisode(it, options) }
-
     }
 }

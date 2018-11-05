@@ -5,12 +5,13 @@ import org.jsoup.Jsoup
 import java.io.InputStream
 import com.google.gson.JsonParser
 import java.util.*
+import kotlin.math.E
 
 
 const val SERIES_INFO = "https://tv-v2.api-fetch.website/show/"
 const val SERIES_SEARCH = "https://tv-v2.api-fetch.website/shows/1?sort=rating&order=-1&genre=all&keywords="
 
-const val epsilon = 43200 //half a day
+const val EPSILON_FACTOR = 3600 //hours to seconds
 
 
 fun InputStream.getAll() = bufferedReader().use { it.readText() }
@@ -63,7 +64,7 @@ fun getLatestEpisode(json: String): String {
 }
 
 
-fun isNew(episode: String, lastCheck: Long): Boolean {
+fun isNew(episode: String, lastCheck: Long, epsilon: Int): Boolean {
 
     if (episode.equals("null")) return false
 
@@ -73,7 +74,7 @@ fun isNew(episode: String, lastCheck: Long): Boolean {
 
     val episodeEpoch = jobject.get("first_aired").asLong
 
-    return (episodeEpoch + epsilon) > lastCheck
+    return (episodeEpoch + epsilon * EPSILON_FACTOR) > lastCheck
 }
 
 
@@ -126,7 +127,7 @@ fun printEpisode(episode: String, options: String = "A") {
     println(newObject.toString())
 }
 
-fun checkForUpdates(lastCheck: Long, shows: Array<String>, includeAll: Boolean = false, getLatest: Boolean = false): MutableList<String> {
+fun checkForUpdates(lastCheck: Long, epsilon: Int, shows: Array<String>, includeAll: Boolean = false, getLatest: Boolean = false): MutableList<String> {
     val result = mutableListOf<String>()
 
     shows.forEach {
@@ -135,7 +136,7 @@ fun checkForUpdates(lastCheck: Long, shows: Array<String>, includeAll: Boolean =
 
         val episodeString = getLatestEpisode(seriesPage)
 
-        val isNewEpisode = isNew(episodeString, lastCheck) || getLatest
+        val isNewEpisode = isNew(episodeString, lastCheck, epsilon) || getLatest
 
         if (includeAll) {
             result.add(if (isNewEpisode) episodeString else "")
