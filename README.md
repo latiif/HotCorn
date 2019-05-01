@@ -41,9 +41,11 @@ When using Hotcorn commandline tool, you first need to pass in the mandatory opt
 * `O` Overview: Prints an overview of the episode.
 * `T` Title: Prints the title of the episode.
 * `E` Episode: Prints the number of the episode.
-* `S` Season: Prints the season of the episode.
+* `S` Show title: Prints the title of the show.
+* `s` Season: Prints the season of the episode.
 * `A` All: Prints all the information.
 * `c` Print CSV: Prints the information in form of CSV file for easier manipulation
+* `e` Print episode id from tvdb.
 
 *Unix epoch*
 This argument represents the timestamp at which the latest check for updates was performed.

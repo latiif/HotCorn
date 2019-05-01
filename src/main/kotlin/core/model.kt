@@ -57,6 +57,7 @@ fun getLatestEpisode(json: String): String {
 
         if (episodeEpoch > maxEpoch) {
             maxEpoch = episodeEpoch
+            it.asJsonObject.addProperty("show_title",jobject["title"].asString)
             latestEpisode = it.toString()
         }
     }
@@ -84,6 +85,7 @@ fun printEpisode(episode: String, options: String = "A") {
         println(""); return
     }
 
+    val printEpisodeId = options.contains("e")
     val printCSV = options.contains("c")
     val getTorrent = options.contains("t")
     val printAll = options.contains("A")
@@ -93,7 +95,8 @@ fun printEpisode(episode: String, options: String = "A") {
     val printOverview = options.contains("O")
     val printTitle = options.contains("T")
     val printEpisode = options.contains("E")
-    val printSeason = options.contains("S")
+    val printSeason = options.contains("s")
+    val printShow = options.contains("S")
 
 
     val jelement = JsonParser().parse(episode)
@@ -121,11 +124,13 @@ fun printEpisode(episode: String, options: String = "A") {
     if (printFirstAiredEpoch) newObject.add("first_aired", jobject.get("first_aired"))
     if (printFirstAired) newObject.addProperty("first_aired_utc", netDate.toString())
 
+    if (printShow) newObject.add("show_title",jobject.get("show_title"))
+
     if (printOverview) newObject.add("overview", jobject.get("overview"))
     if (printTitle) newObject.add("title", jobject.get("title"))
     if (printEpisode) newObject.add("episode", jobject.get("episode"))
     if (printSeason) newObject.add("season", jobject.get("season"))
-
+    if (printEpisodeId) newObject.add("episodeID", jobject.get("tvdb_id"))
 
     if (printCSV)
         println(newObject.toCSV())
@@ -161,8 +166,8 @@ fun JsonObject.toCSV() : String
 
     this.keySet().forEach {
         val prop = this[it]
-        sb = sb.append(prop.asJsonPrimitive.toString()).append(", ")
+        sb = sb.append(prop.asJsonPrimitive.toString().replace("\"","")).append(", ")
     }
 
-    return sb.toString()
+    return sb.toString().removeSuffix(", ")
 }
