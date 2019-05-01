@@ -43,6 +43,7 @@ When using Hotcorn commandline tool, you first need to pass in the mandatory opt
 * `E` Episode: Prints the number of the episode.
 * `S` Season: Prints the season of the episode.
 * `A` All: Prints all the information.
+* `c` Print CSV: Prints the information in form of CSV file for easier manipulation
 
 *Unix epoch*
 This argument represents the timestamp at which the latest check for updates was performed.

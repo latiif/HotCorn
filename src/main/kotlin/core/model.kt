@@ -4,6 +4,7 @@ import com.google.gson.JsonObject
 import org.jsoup.Jsoup
 import java.io.InputStream
 import com.google.gson.JsonParser
+import java.lang.StringBuilder
 import java.util.*
 import kotlin.math.E
 
@@ -83,6 +84,7 @@ fun printEpisode(episode: String, options: String = "A") {
         println(""); return
     }
 
+    val printCSV = options.contains("c")
     val getTorrent = options.contains("t")
     val printAll = options.contains("A")
     val printTorrents = options.contains("D")
@@ -100,9 +102,10 @@ fun printEpisode(episode: String, options: String = "A") {
 
     val netDate = Date(episodeEpoch * 1000)
 
+    val newObject = JsonObject()
+
     if (getTorrent) {
-        println(jobject.get("torrents").asJsonObject.get("0").asJsonObject.get("url").asString)
-        return
+        newObject.addProperty("torrent",jobject.get("torrents").asJsonObject.get("0").asJsonObject.get("url").asString)
     }
 
     if (printAll) {
@@ -112,7 +115,7 @@ fun printEpisode(episode: String, options: String = "A") {
         return
     }
 
-    val newObject = JsonObject()
+
 
     if (printTorrents) newObject.add("torrents", jobject.get("torrents"))
     if (printFirstAiredEpoch) newObject.add("first_aired", jobject.get("first_aired"))
@@ -124,7 +127,11 @@ fun printEpisode(episode: String, options: String = "A") {
     if (printSeason) newObject.add("season", jobject.get("season"))
 
 
-    println(newObject.toString())
+    if (printCSV)
+        println(newObject.toCSV())
+    else
+        println(newObject.toString())
+
 }
 
 fun checkForUpdates(lastCheck: Long, epsilon: Int, shows: Array<String>, includeAll: Boolean = false, getLatest: Boolean = false): MutableList<String> {
@@ -147,4 +154,15 @@ fun checkForUpdates(lastCheck: Long, epsilon: Int, shows: Array<String>, include
     }
 
     return result
+}
+fun JsonObject.toCSV() : String
+{
+    var sb = StringBuilder()
+
+    this.keySet().forEach {
+        val prop = this[it]
+        sb = sb.append(prop.asJsonPrimitive.toString()).append(", ")
+    }
+
+    return sb.toString()
 }
