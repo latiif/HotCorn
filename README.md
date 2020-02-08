@@ -46,6 +46,7 @@ When using Hotcorn commandline tool, you first need to pass in the mandatory opt
 * `A` All: Prints all the information.
 * `c` Print CSV: Prints the information in form of CSV file for easier manipulation
 * `e` Print episode id from tvdb.
+* `M` Extracts multiple episodes of the show that were aired after the specified _Unix epoch_. 🆕
 
 *Unix epoch*
 This argument represents the timestamp at which the latest check for updates was performed.
@@ -59,13 +60,27 @@ Due to the fact that popcorn shows are not uploaded once they are aired and that
 For this argument you can either pass in the IMDB id for the show, or ask Hotcorn to look it up using keywords.
 You can mix id's with keywords.
 
-*NOTE* When using keywords, enclose them with double quotations and use _ instead of spaces.
+*NOTE* When using keywords, enclose them with double quotations.
 
 **Examples**
-`java -jar Hotcorn.jar OSE 0 "rick_and_morty" tt0944947`
-This outputs:
-`{"overview":"Rick goes on a confrontation with the President.","episode":10,"season":3}`
-`{"overview":"House Lannister, Stark and Targaryen meet at the Dragonpit and negotiate the future of Westeros  ...","episode":7,"season":7}`
+#### Get latest episodes of Rick and Morty and Game Of Thrones
 
+This examples identifies Rick and Morty by its name, and Game of Thrones by its id. It returns the episodes' Overview `O`, Show title `S` and episode number `e`.
+
+`java -jar Hotcorn.jar OSE 0 "rick and morty" tt0944947`
+
+This outputs _(as of early 2020)_:
+```json
+{
+  "show_title": "Rick and Morty",
+  "overview": "Lots of things in space broh. Snakes and sharp stuff. Watch this broh.",
+  "episode": 5
+}
+{
+  "show_title": "Game of Thrones",
+  "overview": "In the aftermath of the devastating attack on King's Landing, Daenerys must face the survivors.",
+  "episode": 6
+}
+```
 
 
