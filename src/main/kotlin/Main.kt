@@ -2,19 +2,15 @@ package llusx.hotcorn.app
 
 import llusx.hotcorn.app.core.*
 
-
 object Main {
-
     @JvmStatic
     fun main(args: Array<String>) {
-
         val options = if (args.size > 1)
             args[0]
         else {
             println("ERROR: Arguments expected")
             return
         }
-
 
         val includeAll = args[0].contains("i")
         val getLatest = args[0].contains("l")

@@ -14,11 +14,9 @@ const val SERIES_SEARCH = "https://tv-v2.api-fetch.website/shows/1?sort=rating&o
 
 const val EPSILON_FACTOR = 3600 //hours to seconds
 
-
 fun InputStream.getAll() = bufferedReader().use { it.readText() }
 
 fun parametrize(str: String) = str.replace("_", "%20", true)
-
 
 fun getSeriesViaId(id: String) = Jsoup.connect(SERIES_INFO + id).ignoreContentType(true).execute().body()
 
@@ -46,7 +44,7 @@ fun getLatestEpisode(json: String): String {
     if (json.equals("null")) return "null"
 
     val jelement = JsonParser().parse(json)
-    var jobject = jelement.getAsJsonObject()
+    val jobject = jelement.getAsJsonObject()
 
     val jarray = jobject.getAsJsonArray("episodes")
 
@@ -57,11 +55,10 @@ fun getLatestEpisode(json: String): String {
 
         if (episodeEpoch > maxEpoch) {
             maxEpoch = episodeEpoch
-            it.asJsonObject.addProperty("show_title",jobject["title"].asString)
+            it.asJsonObject.addProperty("show_title", jobject["title"].asString)
             latestEpisode = it.toString()
         }
     }
-
     return latestEpisode
 }
 
@@ -70,10 +67,8 @@ fun isNew(episode: String, lastCheck: Long, epsilon: Int): Boolean {
 
     if (episode.equals("null")) return false
 
-
     val jelement = JsonParser().parse(episode)
     val jobject = jelement.getAsJsonObject()
-
     val episodeEpoch = jobject.get("first_aired").asLong
 
     return (episodeEpoch + epsilon * EPSILON_FACTOR) > lastCheck
@@ -98,7 +93,6 @@ fun printEpisode(episode: String, options: String = "A") {
     val printSeason = options.contains("s")
     val printShow = options.contains("S")
 
-
     val jelement = JsonParser().parse(episode)
     val jobject = jelement.getAsJsonObject()
     val episodeEpoch = jobject.get("first_aired").asLong
@@ -108,7 +102,7 @@ fun printEpisode(episode: String, options: String = "A") {
     val newObject = JsonObject()
 
     if (getTorrent) {
-        newObject.addProperty("torrent",jobject.get("torrents").asJsonObject.get("0").asJsonObject.get("url").asString)
+        newObject.addProperty("torrent", jobject.get("torrents").asJsonObject.get("0").asJsonObject.get("url").asString)
     }
 
     if (printAll) {
@@ -118,13 +112,11 @@ fun printEpisode(episode: String, options: String = "A") {
         return
     }
 
-
-
     if (printTorrents) newObject.add("torrents", jobject.get("torrents"))
     if (printFirstAiredEpoch) newObject.add("first_aired", jobject.get("first_aired"))
     if (printFirstAired) newObject.addProperty("first_aired_utc", netDate.toString())
 
-    if (printShow) newObject.add("show_title",jobject.get("show_title"))
+    if (printShow) newObject.add("show_title", jobject.get("show_title"))
 
     if (printOverview) newObject.add("overview", jobject.get("overview"))
     if (printTitle) newObject.add("title", jobject.get("title"))
@@ -136,7 +128,6 @@ fun printEpisode(episode: String, options: String = "A") {
         println(newObject.toCSV())
     else
         println(newObject.toString())
-
 }
 
 fun checkForUpdates(lastCheck: Long, epsilon: Int, shows: Array<String>, includeAll: Boolean = false, getLatest: Boolean = false): MutableList<String> {
@@ -157,17 +148,15 @@ fun checkForUpdates(lastCheck: Long, epsilon: Int, shows: Array<String>, include
 
         if (isNewEpisode && !includeAll) result.add(episodeString)
     }
-
     return result
 }
-fun JsonObject.toCSV() : String
-{
+
+fun JsonObject.toCSV(): String {
     var sb = StringBuilder()
 
     this.keySet().forEach {
         val prop = this[it]
-        sb = sb.append(prop.asJsonPrimitive.toString().replace("\"","")).append(", ")
+        sb = sb.append(prop.asJsonPrimitive.toString().replace("\"", "")).append(", ")
     }
-
     return sb.toString().removeSuffix(", ")
 }
