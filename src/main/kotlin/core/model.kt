@@ -1,18 +1,16 @@
 package llusx.hotcorn.app.core
 
 import com.google.gson.JsonObject
-import org.jsoup.Jsoup
-import java.io.InputStream
 import com.google.gson.JsonParser
+import java.io.InputStream
 import java.lang.StringBuilder
 import java.util.*
-import kotlin.math.E
-
+import org.jsoup.Jsoup
 
 const val SERIES_INFO = "https://tv-v2.api-fetch.website/show/"
 const val SERIES_SEARCH = "https://tv-v2.api-fetch.website/shows/1?sort=rating&order=-1&genre=all&keywords="
 
-const val EPSILON_FACTOR = 3600 //hours to seconds
+const val EPSILON_FACTOR = 3600 // hours to seconds
 
 fun InputStream.getAll() = bufferedReader().use { it.readText() }
 
@@ -30,7 +28,6 @@ fun getSeriesViaKeyword(keyword: String): String {
     return getSeriesViaId(jobject[0].asJsonObject.get("imdb_id").asString)
 }
 
-
 fun getEpisodes(json: String): String {
     val jelement = JsonParser().parse(json)
     var jobject = jelement.asJsonObject
@@ -38,7 +35,6 @@ fun getEpisodes(json: String): String {
     val jarray = jobject.getAsJsonArray("episodes")
     return jarray.toString()
 }
-
 
 fun getLatestEpisode(json: String): String {
     if (json.equals("null")) return "null"
@@ -62,7 +58,6 @@ fun getLatestEpisode(json: String): String {
     return latestEpisode
 }
 
-
 fun getLatestEpisodes(json: String, epoch: Long): List<String> {
     if (json.equals("null")) return listOf()
 
@@ -83,7 +78,6 @@ fun getLatestEpisodes(json: String, epoch: Long): List<String> {
     return latestEpisodes
 }
 
-
 fun isNew(episode: String, lastCheck: Long, epsilon: Int): Boolean {
 
     if (episode.equals("null")) return false
@@ -94,7 +88,6 @@ fun isNew(episode: String, lastCheck: Long, epsilon: Int): Boolean {
 
     return (episodeEpoch + epsilon * EPSILON_FACTOR) > lastCheck
 }
-
 
 fun printEpisode(episode: String, options: String = "A") {
     if (episode.equals("null") || episode.equals("")) {
@@ -123,11 +116,11 @@ fun printEpisode(episode: String, options: String = "A") {
     val newObject = JsonObject()
 
     if (getTorrent) {
-        newObject.addProperty("torrent", jobject.get("torrents").asJsonObject.get("0").asJsonObject.get("url").asString)
+        newObject.addProperty("torrent", retrieveBestTorrent(jobject.get("torrents").asJsonObject))
     }
 
     if (printAll) {
-        jobject.addProperty("first_aired_utc", netDate.toString());
+        jobject.addProperty("first_aired_utc", netDate.toString())
 
         println(jobject.toString())
         return
@@ -160,7 +153,7 @@ fun checkForUpdates(lastCheck: Long, epsilon: Int, shows: Array<String>, getMutl
 
         val episodeStrings = if (getMutlipleEpisodes) {
             getLatestEpisodes(seriesPage, lastCheck)
-        }else{
+        } else {
             listOf(getLatestEpisode(seriesPage))
         }
 
@@ -183,4 +176,17 @@ fun JsonObject.toCSV(): String {
         sb = sb.append(prop.asJsonPrimitive.toString().replace("\"", "")).append(", ")
     }
     return sb.toString().removeSuffix(", ")
+}
+
+fun retrieveBestTorrent(torrentsObject: JsonObject): String {
+    val options = listOf("1080p", "720p", "480p", "0")
+
+    for (resolution in options) {
+        try {
+            return torrentsObject.get(resolution).asJsonObject.get("url").asString
+        } catch (e: Exception) {
+            continue
+        }
+    }
+    return ""
 }

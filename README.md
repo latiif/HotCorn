@@ -10,7 +10,7 @@ In order to be able to download and use the code you have to have `git` and `mav
 
 From within the folder you want to have the code installed run the following command
 
- `git clone https://github.com/llusx/HotCorn && cd HotCorn &&  mvn clean package`
+ `git clone https://github.com/latiif/HotCorn && cd HotCorn &&  mvn clean package`
 
 This command will download the code and build it using `maven`. 
 
@@ -34,7 +34,7 @@ This will yield an error message because you have to provide arguments, more on 
 When using Hotcorn commandline tool, you first need to pass in the mandatory options flags, at least one of them must be there.
 * `i` include all: This flag asks Hotcorn to print out a new line for every tvshow nomatter if it has updates or not, if a tvshow doesn't have a new update a blank line will be printed out.
 * `l` get latest: This flag asks Hotcorn retrieve the latest episode of the shows regardless of the last check time.
-* `t` torrent: Prints a magnet torrent link to the latest episode (usually the best one).
+* `t` 🆕 torrent: Prints a magnet torrent link to the latest episode. Tries to pick the highest resolution (first 1080p then 720p and finally 480p).
 * `D` Downloads: Prints an array of all torrent magnet links.
 * `P` First-aired Epoch: Prints the unixtime when the episode was first aired.
 * `F` First-aired: Prints the human date when the episode was first aired.
@@ -46,7 +46,7 @@ When using Hotcorn commandline tool, you first need to pass in the mandatory opt
 * `A` All: Prints all the information.
 * `c` Print CSV: Prints the information in form of CSV file for easier manipulation
 * `e` Print episode id from tvdb.
-* `M` Extracts multiple episodes of the show that were aired after the specified _Unix epoch_. 🆕
+* `M` 🆕 Extracts multiple episodes of the show that were aired after the specified _Unix epoch_.
 
 *Unix epoch*
 This argument represents the timestamp at which the latest check for updates was performed.
