@@ -6,7 +6,7 @@
 
     <groupId>llusx.hotcorn.app</groupId>
     <artifactId>HotCorn</artifactId>
-    <version>0.6</version>
+    <version>0.7</version>
 
     <properties>
         <kotlin.version>1.2.51</kotlin.version>
