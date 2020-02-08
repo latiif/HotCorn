@@ -63,6 +63,27 @@ fun getLatestEpisode(json: String): String {
 }
 
 
+fun getLatestEpisodes(json: String, epoch: Long): List<String> {
+    if (json.equals("null")) return listOf()
+
+    val jelement = JsonParser().parse(json)
+    val jobject = jelement.getAsJsonObject()
+
+    val jarray = jobject.getAsJsonArray("episodes")
+
+    val latestEpisodes = mutableListOf<String>()
+    jarray.forEach {
+        val episodeEpoch: Long = it.asJsonObject.get("first_aired").asLong
+
+        if (episodeEpoch > epoch) {
+            it.asJsonObject.addProperty("show_title", jobject["title"].asString)
+            latestEpisodes.add(it.toString())
+        }
+    }
+    return latestEpisodes
+}
+
+
 fun isNew(episode: String, lastCheck: Long, epsilon: Int): Boolean {
 
     if (episode.equals("null")) return false
@@ -130,23 +151,26 @@ fun printEpisode(episode: String, options: String = "A") {
         println(newObject.toString())
 }
 
-fun checkForUpdates(lastCheck: Long, epsilon: Int, shows: Array<String>, includeAll: Boolean = false, getLatest: Boolean = false): MutableList<String> {
+fun checkForUpdates(lastCheck: Long, epsilon: Int, shows: Array<String>, getMutlipleEpisodes: Boolean = true, includeAll: Boolean = false, getLatest: Boolean = false): MutableList<String> {
     val result = mutableListOf<String>()
 
     shows.forEach {
         var seriesPage = getSeriesViaId(it)
         if (seriesPage.equals("null")) seriesPage = getSeriesViaKeyword(it)
 
-        val episodeString = getLatestEpisode(seriesPage)
-
-        val isNewEpisode = isNew(episodeString, lastCheck, epsilon) || getLatest
-
-        if (includeAll) {
-            result.add(if (isNewEpisode) episodeString else "")
-            return@forEach
+        val episodeStrings = if (getMutlipleEpisodes) {
+            getLatestEpisodes(seriesPage, lastCheck)
+        }else{
+            listOf(getLatestEpisode(seriesPage))
         }
 
-        if (isNewEpisode && !includeAll) result.add(episodeString)
+        for (episodeString in episodeStrings) {
+            val isNewEpisode = isNew(episodeString, lastCheck, epsilon) || getLatest
+            if (includeAll) {
+                result.add(if (isNewEpisode) episodeString else "")
+            }
+            if (isNewEpisode && !includeAll) result.add(episodeString)
+        }
     }
     return result
 }

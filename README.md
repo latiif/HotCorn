@@ -82,5 +82,41 @@ This outputs _(as of early 2020)_:
   "episode": 6
 }
 ```
+#### Get All Latest Episodes of Vikings aired after January 1st 2020
+In this example we get *ALL* episodes of Vikings aired afetr January 1st 2020 i.e. _1577842429_.
 
+`java -jar HotCorn.jar sTEM 1577842429 Vikings`
 
+This outputs _(as of early 2020)_:
+```json
+{
+  "title": "The Key",
+  "episode": 5,
+  "season": 6
+}
+{
+  "title": "Death and the Serpent",
+  "episode": 6,
+  "season": 6
+}
+{
+  "title": "The Ice Maiden",
+  "episode": 7,
+  "season": 6
+}
+{
+  "title": "Valhalla Can Wait",
+  "episode": 8,
+  "season": 6
+}
+{
+  "title": "Resurrection",
+  "episode": 9,
+  "season": 6
+}
+{
+  "title": "The Best Laid Plans",
+  "episode": 10,
+  "season": 6
+}
+```
