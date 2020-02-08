@@ -2,29 +2,21 @@
 
 Kotlin wrapper tool to check for TV shows updates using the [Popcorntime api](https://popcornofficial.docs.apiary.io/#reference/show )
 
-**Usage**
+**Grab it**
 
-In order to be able to download and use the code you have to have `git` and `maven` installed 
+Just download it from [here](https://github.com/latiif/HotCorn/releases/download/v0.7/HotCorn.jar), or via the terminal by running:
 
-**Downloading the code**
-
-From within the folder you want to have the code installed run the following command
-
- `git clone https://github.com/latiif/HotCorn && cd HotCorn &&  mvn clean package`
-
-This command will download the code and build it using `maven`. 
-
-The resulting jar files will reside inside in `HotCorn/target` 
+`wget https://github.com/latiif/HotCorn/releases/download/v0.7/HotCorn.jar`
 
 **Running HotCorn**
 
 This requires you to have `JRE` installed on your machine
 
-Within the target folder run:
+Go to the folder where the `JAR` was downloaded and run:
 
-`java -jar HotCorn-0.6-jar-with-dependencies.jar`
+`java -jar HotCorn.jar`
 
-This will yield an error message because you have to provide arguments, more on this later
+This will yield an error message because you have to provide arguments, more on this below.
 
 **Synopsis**
 
@@ -120,3 +112,16 @@ This outputs _(as of early 2020)_:
   "season": 6
 }
 ```
+
+**Building from source**
+
+In order to be able to download and use the code you have to have `git` and `maven` installed 
+
+From within the folder you want to have the code installed run the following command
+
+ `git clone https://github.com/latiif/HotCorn && cd HotCorn &&  mvn clean package`
+
+This command will download the code and build it using `maven`. 
+
+The resulting jar files will reside inside in `HotCorn/target` 
+
