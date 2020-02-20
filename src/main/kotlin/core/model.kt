@@ -184,7 +184,7 @@ fun retrieveBestTorrent(torrentsObject: JsonObject): String {
     for (resolution in options) {
         try {
             return torrentsObject.get(resolution).asJsonObject.get("url").asString
-        } catch (e: Exception) {
+        } catch (e: IllegalStateException) {
             continue
         }
     }
