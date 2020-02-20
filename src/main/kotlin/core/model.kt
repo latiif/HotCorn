@@ -144,7 +144,7 @@ fun printEpisode(episode: String, options: String = "A") {
         println(newObject.toString())
 }
 
-fun checkForUpdates(lastCheck: Long, epsilon: Int, shows: Array<String>, getMutlipleEpisodes: Boolean = true, includeAll: Boolean = false, getLatest: Boolean = false): MutableList<String> {
+fun checkForUpdates(lastCheck: Long, epsilon: Int, shows: List<String>, getMutlipleEpisodes: Boolean = true, includeAll: Boolean = false, getLatest: Boolean = false): MutableList<String> {
     val result = mutableListOf<String>()
 
     shows.forEach {

@@ -38,8 +38,7 @@ object Main {
             shift = 4
         }
 
-        val shows = Array(args.size - shift) { args[it + shift] }
-
+        val shows = List(args.size - shift) { args[it + shift] }
 
         val result = checkForUpdates(lastCheck,epsilon, shows, getMultipleEpisodes, includeAll, getLatest)
 
