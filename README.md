@@ -20,7 +20,9 @@ This will yield an error message because you have to provide arguments, more on 
 
 **Synopsis**
 
-`java -jar Hotcorn.jar <option flags> <unix epoch> [-epsilon <time in hours>] "<tv show name or imdb code>"[<tv show name or imdb code> ...]`
+`java -jar Hotcorn.jar <option flags> <unix epoch> [-epsilon <time in hours>]`
+
+Reads from standard input a newline separated tv show name or an imdb id
 
 *Options*
 When using Hotcorn commandline tool, you first need to pass in the mandatory options flags, at least one of them must be there.
@@ -59,7 +61,11 @@ You can mix id's with keywords.
 
 This examples identifies Rick and Morty by its name, and Game of Thrones by its id. It returns the episodes' Overview `O`, Show title `S` and episode number `e`.
 
-`java -jar Hotcorn.jar OSE 0 "rick and morty" tt0944947`
+```bash
+java -jar Hotcorn.jar OSE 0 
+> "rick and morty"
+> tt0944947
+```
 
 This outputs _(as of early 2020)_:
 ```json
@@ -77,7 +83,11 @@ This outputs _(as of early 2020)_:
 #### Get All Latest Episodes of Vikings aired after January 1st 2020
 In this example we get *ALL* episodes of Vikings aired afetr January 1st 2020 i.e. _1577842429_.
 
-`java -jar HotCorn.jar sTEM 1577842429 Vikings`
+```bash
+java -jar HotCorn.jar sTEM
+> 1577842429 
+> Vikings
+```
 
 This outputs _(as of early 2020)_:
 ```json

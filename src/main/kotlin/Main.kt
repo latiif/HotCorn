@@ -38,7 +38,7 @@ object Main {
             shift = 4
         }
 
-        val shows = List(args.size - shift) { args[it + shift] }
+        val shows = generateSequence(::readLine).toList()
 
         val result = checkForUpdates(lastCheck,epsilon, shows, getMultipleEpisodes, includeAll, getLatest)
 
