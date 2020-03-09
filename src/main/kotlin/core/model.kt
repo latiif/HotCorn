@@ -23,14 +23,14 @@ fun getSeriesViaKeyword(keyword: String): String {
     if (json.equals("null")) return "null"
     val jsonElement = JsonParser().parse(json)
 
-    var jobject = jsonElement.asJsonArray
+    val jobject = jsonElement.asJsonArray
     if (jobject.size() == 0) return "null"
     return getSeriesViaId(jobject[0].asJsonObject.get("imdb_id").asString)
 }
 
 fun getEpisodes(json: String): String {
     val jelement = JsonParser().parse(json)
-    var jobject = jelement.asJsonObject
+    val jobject = jelement.asJsonObject
 
     val jarray = jobject.getAsJsonArray("episodes")
     return jarray.toString()
@@ -44,18 +44,10 @@ fun getLatestEpisode(json: String): String {
 
     val jarray = jobject.getAsJsonArray("episodes")
 
-    var maxEpoch: Long = 0
-    var latestEpisode: String = ""
-    jarray.forEach {
-        val episodeEpoch: Long = it.asJsonObject.get("first_aired").asLong
+    val latestEpisode = jarray.maxBy { it.asJsonObject.get("first_aired").asLong }
+    latestEpisode?.asJsonObject?.addProperty("show_title",jobject["title"].asString)
 
-        if (episodeEpoch > maxEpoch) {
-            maxEpoch = episodeEpoch
-            it.asJsonObject.addProperty("show_title", jobject["title"].asString)
-            latestEpisode = it.toString()
-        }
-    }
-    return latestEpisode
+    return latestEpisode.toString()
 }
 
 fun getLatestEpisodes(json: String, epoch: Long): List<String> {
@@ -148,8 +140,7 @@ fun checkForUpdates(lastCheck: Long, epsilon: Int, shows: List<String>, getMutli
     val result = mutableListOf<String>()
 
     shows.forEach {
-        var seriesPage = getSeriesViaId(it)
-        if (seriesPage.equals("null")) seriesPage = getSeriesViaKeyword(it)
+        val seriesPage =  getSeriesViaId(it).nullIfEqualTo("null") ?: getSeriesViaKeyword(it)
 
         val episodeStrings = if (getMutlipleEpisodes) {
             getLatestEpisodes(seriesPage, lastCheck)
@@ -189,4 +180,8 @@ fun retrieveBestTorrent(torrentsObject: JsonObject): String {
         }
     }
     return ""
+}
+
+fun String.nullIfEqualTo(str: String): String?{
+    return if (this == str) null else this
 }

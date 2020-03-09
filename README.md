@@ -84,7 +84,7 @@ This outputs _(as of early 2020)_:
 In this example we get *ALL* episodes of Vikings aired afetr January 1st 2020 i.e. _1577842429_.
 
 ```bash
-java -jar HotCorn.jar sTEM
+java -jar HotCorn.jar sTEM 1577842429
 > 1577842429 
 > Vikings
 ```

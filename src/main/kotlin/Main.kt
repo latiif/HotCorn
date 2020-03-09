@@ -8,7 +8,7 @@ object Main {
         val options = if (args.size > 1)
             args[0]
         else {
-            println("ERROR: Arguments expected")
+            println("ERROR: Arguments expected.")
             return
         }
 
@@ -30,17 +30,15 @@ object Main {
             return
         }
 
-        var shift = 2
-        var epsilon = 0
         val epsilonIndex = args.lastIndexOf("-epsilon");
-        if (epsilonIndex != -1) {
-            epsilon = args[epsilonIndex+1].toInt()
-            shift = 4
+        val epsilon = if (epsilonIndex != -1) {
+            args[epsilonIndex + 1].toInt()
+        } else {
+            0
         }
 
         val shows = generateSequence(::readLine).toList()
-
-        val result = checkForUpdates(lastCheck,epsilon, shows, getMultipleEpisodes, includeAll, getLatest)
+        val result = checkForUpdates(lastCheck, epsilon, shows, getMultipleEpisodes, includeAll, getLatest)
 
         result.forEach { printEpisode(it, options) }
     }
