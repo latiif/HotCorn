@@ -71,45 +71,42 @@ fun getLatestEpisodes(json: String, epoch: Long): List<String> {
 }
 
 fun isNew(episode: String, lastCheck: Long, epsilon: Int): Boolean {
-
-    if (episode.equals("null")) return false
+    episode.nullIfEqualTo("null") ?: return false
 
     val jelement = JsonParser().parse(episode)
-    val jobject = jelement.getAsJsonObject()
-    val episodeEpoch = jobject.get("first_aired").asLong
+    val jobject = jelement.asJsonObject
+    val episodeEpoch = jobject["first_aired"].asLong
 
     return (episodeEpoch + epsilon * EPSILON_FACTOR) > lastCheck
 }
 
 fun printEpisode(episode: String, options: String = "A") {
-    if (episode.equals("null") || episode.equals("")) {
+    if (episode == "null" || episode == "") {
         println(""); return
     }
 
-    val printEpisodeId = options.contains("e")
-    val printCSV = options.contains("c")
-    val getTorrent = options.contains("t")
-    val printAll = options.contains("A")
-    val printTorrents = options.contains("D")
-    val printFirstAiredEpoch = options.contains("P")
-    val printFirstAired = options.contains("F")
-    val printOverview = options.contains("O")
-    val printTitle = options.contains("T")
-    val printEpisode = options.contains("E")
-    val printSeason = options.contains("s")
-    val printShow = options.contains("S")
+    val printEpisodeId = "e" in options
+    val printCSV = "c" in options
+    val getTorrent = "t" in options
+    val printAll = "A" in options
+    val printTorrents = "D" in options
+    val printFirstAiredEpoch = "P" in options
+    val printFirstAired = "F" in options
+    val printOverview = "O" in options
+    val printTitle = "T" in options
+    val printEpisode = "E" in options
+    val printSeason = "s" in options
+    val printShow = "S" in options
 
     val jelement = JsonParser().parse(episode)
-    val jobject = jelement.getAsJsonObject()
-    val episodeEpoch = jobject.get("first_aired").asLong
+    val jobject = jelement.asJsonObject
+    val episodeEpoch = jobject["first_aired"].asLong
 
     val netDate = Date(episodeEpoch * 1000)
 
-    val newObject = JsonObject()
+    val episodeInfo = JsonObject()
 
-    if (getTorrent) {
-        newObject.addProperty("torrent", retrieveBestTorrent(jobject.get("torrents").asJsonObject))
-    }
+    if (getTorrent) episodeInfo.addProperty("torrent", retrieveBestTorrent(jobject["torrents"].asJsonObject))
 
     if (printAll) {
         jobject.addProperty("first_aired_utc", netDate.toString())
@@ -118,22 +115,22 @@ fun printEpisode(episode: String, options: String = "A") {
         return
     }
 
-    if (printTorrents) newObject.add("torrents", jobject.get("torrents"))
-    if (printFirstAiredEpoch) newObject.add("first_aired", jobject.get("first_aired"))
-    if (printFirstAired) newObject.addProperty("first_aired_utc", netDate.toString())
+    if (printTorrents) episodeInfo.add("torrents", jobject["torrents"])
+    if (printFirstAiredEpoch) episodeInfo.add("first_aired", jobject["first_aired"])
+    if (printFirstAired) episodeInfo.addProperty("first_aired_utc", netDate.toString())
 
-    if (printShow) newObject.add("show_title", jobject.get("show_title"))
+    if (printShow) episodeInfo.add("show_title", jobject["show_title"])
 
-    if (printOverview) newObject.add("overview", jobject.get("overview"))
-    if (printTitle) newObject.add("title", jobject.get("title"))
-    if (printEpisode) newObject.add("episode", jobject.get("episode"))
-    if (printSeason) newObject.add("season", jobject.get("season"))
-    if (printEpisodeId) newObject.add("episodeID", jobject.get("tvdb_id"))
+    if (printOverview) episodeInfo.add("overview", jobject["overview"])
+    if (printTitle) episodeInfo.add("title", jobject["title"])
+    if (printEpisode) episodeInfo.add("episode", jobject["episode"])
+    if (printSeason) episodeInfo.add("season", jobject["season"])
+    if (printEpisodeId) episodeInfo.add("episodeID", jobject["tvdb_id"])
 
     if (printCSV)
-        println(newObject.toCSV())
+        println(episodeInfo.toCSV())
     else
-        println(newObject.toString())
+        println(episodeInfo.toString())
 }
 
 fun checkForUpdates(lastCheck: Long, epsilon: Int, shows: List<String>, getMutlipleEpisodes: Boolean = true, includeAll: Boolean = false, getLatest: Boolean = false): MutableList<String> {
@@ -182,6 +179,4 @@ fun retrieveBestTorrent(torrentsObject: JsonObject): String {
     return ""
 }
 
-fun String.nullIfEqualTo(str: String): String? {
-    return if (this == str) null else this
-}
+fun String.nullIfEqualTo(str: String) = if (this == str) null else this

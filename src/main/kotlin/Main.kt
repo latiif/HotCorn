@@ -12,9 +12,9 @@ object Main {
             return
         }
 
-        val includeAll = args[0].contains("i")
-        val getLatest = args[0].contains("l")
-        val getMultipleEpisodes = args[0].contains("M")
+        val includeAll = "i" in args[0]
+        val getLatest = "l" in args[0]
+        val getMultipleEpisodes = "M" in args[0]
 
         if (args.size < 2) {
             println("ERROR: A last check timestamp is required")
