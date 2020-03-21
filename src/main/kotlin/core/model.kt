@@ -14,7 +14,7 @@ const val EPSILON_FACTOR = 3600 // hours to seconds
 
 fun InputStream.getAll() = bufferedReader().use { it.readText() }
 
-fun parametrize(str: String) = str.replace("_", "%20", true)
+fun parametrize(str: String) = str.replace("_", "%20", true).replace(" ", "%20", true)
 
 fun getSeriesViaId(id: String) = Jsoup.connect(SERIES_INFO + id).ignoreContentType(true).execute().body()
 
@@ -45,7 +45,7 @@ fun getLatestEpisode(json: String): String {
     val jarray = jobject.getAsJsonArray("episodes")
 
     val latestEpisode = jarray.maxBy { it.asJsonObject.get("first_aired").asLong }
-    latestEpisode?.asJsonObject?.addProperty("show_title",jobject["title"].asString)
+    latestEpisode?.asJsonObject?.addProperty("show_title", jobject["title"].asString)
 
     return latestEpisode.toString()
 }
@@ -140,7 +140,7 @@ fun checkForUpdates(lastCheck: Long, epsilon: Int, shows: List<String>, getMutli
     val result = mutableListOf<String>()
 
     shows.forEach {
-        val seriesPage =  getSeriesViaId(it).nullIfEqualTo("null") ?: getSeriesViaKeyword(it)
+        val seriesPage = getSeriesViaId(it).nullIfEqualTo("null") ?: getSeriesViaKeyword(it)
 
         val episodeStrings = if (getMutlipleEpisodes) {
             getLatestEpisodes(seriesPage, lastCheck)
@@ -182,6 +182,6 @@ fun retrieveBestTorrent(torrentsObject: JsonObject): String {
     return ""
 }
 
-fun String.nullIfEqualTo(str: String): String?{
+fun String.nullIfEqualTo(str: String): String? {
     return if (this == str) null else this
 }
