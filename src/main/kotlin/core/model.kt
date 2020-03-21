@@ -7,10 +7,13 @@ import java.lang.StringBuilder
 import java.util.*
 import org.jsoup.Jsoup
 
+
 const val SERIES_INFO = "https://tv-v2.api-fetch.website/show/"
 const val SERIES_SEARCH = "https://tv-v2.api-fetch.website/shows/1?sort=rating&order=-1&genre=all&keywords="
 
 const val EPSILON_FACTOR = 3600 // hours to seconds
+
+var write : (Any?)-> Unit = ::println
 
 fun InputStream.getAll() = bufferedReader().use { it.readText() }
 
@@ -82,7 +85,7 @@ fun isNew(episode: String, lastCheck: Long, epsilon: Int): Boolean {
 
 fun printEpisode(episode: String, options: String = "A") {
     if (episode == "null" || episode == "") {
-        println(""); return
+        write(""); return
     }
 
     val printEpisodeId = "e" in options
@@ -111,7 +114,7 @@ fun printEpisode(episode: String, options: String = "A") {
     if (printAll) {
         jobject.addProperty("first_aired_utc", netDate.toString())
 
-        println(jobject.toString())
+        write(jobject.toString())
         return
     }
 
@@ -128,18 +131,18 @@ fun printEpisode(episode: String, options: String = "A") {
     if (printEpisodeId) episodeInfo.add("episodeID", jobject["tvdb_id"])
 
     if (printCSV)
-        println(episodeInfo.toCSV())
+        write(episodeInfo.toCSV())
     else
-        println(episodeInfo.toString())
+        write(episodeInfo.toString())
 }
 
-fun checkForUpdates(lastCheck: Long, epsilon: Int, shows: List<String>, getMutlipleEpisodes: Boolean = true, includeAll: Boolean = false, getLatest: Boolean = false): MutableList<String> {
+fun checkForUpdates(lastCheck: Long, epsilon: Int, shows: List<String>, multipleEpisodes: Boolean = true, includeAll: Boolean = false, getLatest: Boolean = false): MutableList<String> {
     val result = mutableListOf<String>()
 
     shows.forEach {
         val seriesPage = getSeriesViaId(it).nullIfEqualTo("null") ?: getSeriesViaKeyword(it)
 
-        val episodeStrings = if (getMutlipleEpisodes) {
+        val episodeStrings = if (multipleEpisodes) {
             getLatestEpisodes(seriesPage, lastCheck)
         } else {
             listOf(getLatestEpisode(seriesPage))

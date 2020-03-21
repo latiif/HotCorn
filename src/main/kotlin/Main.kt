@@ -5,6 +5,11 @@ import llusx.hotcorn.app.core.*
 object Main {
     @JvmStatic
     fun main(args: Array<String>) {
+        executeCommand(args, ::readLine)
+    }
+
+    fun executeCommand(args: Array<String>, inputReader: () -> String?) {
+
         val options = if (args.size > 1)
             args[0]
         else {
@@ -37,7 +42,7 @@ object Main {
             0
         }
 
-        val shows = generateSequence(::readLine).toList()
+        val shows = generateSequence(inputReader).toList()
         val result = checkForUpdates(lastCheck, epsilon, shows, getMultipleEpisodes, includeAll, getLatest)
 
         result.forEach { printEpisode(it, options) }
