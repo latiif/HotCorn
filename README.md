@@ -1,3 +1,5 @@
+![GitHub top language](https://img.shields.io/github/languages/top/latiif/HotCorn?color=%23F18E33&label=kotlin&logo=Kotlin&logoColor=%23F18E33&style=for-the-badge) ![GitHub last commit](https://img.shields.io/github/last-commit/latiif/HotCorn?style=for-the-badge) ![GitHub release (latest by date)](https://img.shields.io/github/v/release/latiif/HotCorn?style=for-the-badge)
+
 **HotCorn** 
 
 Kotlin wrapper tool to check for TV shows updates using the [Popcorntime api](https://popcornofficial.docs.apiary.io/#reference/show )
@@ -6,7 +8,7 @@ Kotlin wrapper tool to check for TV shows updates using the [Popcorntime api](ht
 
 Just download it from [here](https://github.com/latiif/HotCorn/releases/download/v0.7/HotCorn.jar), or via the terminal by running:
 
-`wget https://github.com/latiif/HotCorn/releases/download/v0.7/HotCorn.jar`
+`wget https://github.com/latiif/HotCorn/releases/download/v0.8/HotCorn.jar`
 
 **Running HotCorn**
 
@@ -54,7 +56,7 @@ Due to the fact that popcorn shows are not uploaded once they are aired and that
 For this argument you can either pass in the IMDB id for the show, or ask Hotcorn to look it up using keywords.
 You can mix id's with keywords.
 
-*NOTE* When using keywords, enclose them with double quotations.
+~~*NOTE* When using keywords, enclose them with double quotations.~~ Unnecessary since [`Permissive search by keywords`](https://github.com/latiif/HotCorn/commit/62d22b4f71f23f9f4c4cd87e2546271ebc6a9c7f).
 
 **Examples**
 #### Get latest episodes of Rick and Morty and Game Of Thrones
@@ -81,7 +83,7 @@ This outputs _(as of early 2020)_:
 }
 ```
 #### Get All Latest Episodes of Vikings aired after January 1st 2020
-In this example we get *ALL* episodes of Vikings aired afetr January 1st 2020 i.e. _1577842429_.
+In this example we get *ALL* episodes of Vikings aired after January 1st 2020 i.e. _1577842429_.
 
 ```bash
 java -jar HotCorn.jar sTEM 1577842429
