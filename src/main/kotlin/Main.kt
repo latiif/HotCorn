@@ -42,7 +42,7 @@ object Main {
             0
         }
 
-        val shows = generateSequence(inputReader).toList()
+        val shows = generateSequence(inputReader).filter(String::isNotBlank).toList()
         val result = checkForUpdates(lastCheck, epsilon, shows, getMultipleEpisodes, includeAll, getLatest)
 
         result.forEach { printEpisode(it, options) }
