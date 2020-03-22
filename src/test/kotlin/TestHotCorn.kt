@@ -4,6 +4,11 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import java.lang.StringBuilder
 
+typealias Assessment = Pair<Boolean, String>
+
+fun Assessment.succeeded() = this.first
+fun Assessment.response() = this.second
+
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class TestHotCorn {
     class InputSender(val items: List<String>) {
@@ -27,7 +32,8 @@ class TestHotCorn {
 
     data class TestCase(val flags: String, val afterEpoch: String, val shows: List<String>, val result: List<String>)
 
-    fun TestCase.run(): Boolean {
+
+    fun TestCase.run(): Assessment {
         val args = mutableListOf<String>()
 
         val flags = this.flags.fold("", { acc, c -> "$acc$c" })
@@ -40,9 +46,9 @@ class TestHotCorn {
         Main.executeCommand(args.toTypedArray(), inputSender::readLine)
 
         bucket.flush().also { output ->
-            return this.result.all { episode ->
+            return Assessment(this.result.all { episode ->
                 episode in output
-            }
+            }, output)
         }
     }
 
@@ -56,19 +62,43 @@ class TestHotCorn {
                 "{\"title\":\"The Key\",\"episode\":5,\"season\":6}",
                 "{\"title\":\"The Best Laid Plans\",\"episode\":10,\"season\":6}"
             )
-        ).run().also(::assert)
+        ).run().apply { assert(succeeded()) }
     }
 
     @Test
-    fun `Get Information on Multiple Series`(){
+    fun `Get Information on Multiple Series`() {
         TestCase(
             flags = "S",
-            shows = listOf("vikings","rick and morty"),
+            shows = listOf("vikings", "rick and morty"),
             afterEpoch = "0",
             result = listOf(
                 "Vikings",
                 "Rick and Morty"
             )
-        ).run().also(::assert)
+        ).run().apply { assert(succeeded()) }
+    }
+    
+    @Test
+    fun `Invalid ID Returns Empty Response`() {
+        TestCase(
+            flags = "S",
+            shows = listOf("wqeqweqweqwrq"), // random gibberish keyword
+            afterEpoch = "0",
+            result = listOf()
+        ).run().apply {
+            assert(succeeded() and response().isEmpty())
+        }
+    }
+
+    @Test
+    fun `Empty Show Keyword Returns Empty Response`() {
+        TestCase(
+            flags = "S",
+            shows = listOf("", " ", "" + "\t"), // Empty strings
+            afterEpoch = "0",
+            result = listOf()
+        ).run().apply {
+            assert(succeeded() and response().isEmpty())
+        }
     }
 }
