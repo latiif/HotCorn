@@ -7,19 +7,24 @@ import java.lang.StringBuilder
 import java.util.*
 import org.jsoup.Jsoup
 
-
 const val SERIES_INFO = "https://tv-v2.api-fetch.website/show/"
 const val SERIES_SEARCH = "https://tv-v2.api-fetch.website/shows/1?sort=rating&order=-1&genre=all&keywords="
 
 const val EPSILON_FACTOR = 3600 // hours to seconds
 
-var write : (Any?)-> Unit = ::println
+var write: (Any?) -> Unit = ::println
 
 fun InputStream.getAll() = bufferedReader().use { it.readText() }
 
 fun parametrize(str: String) = str.replace("_", "%20", true).replace(" ", "%20", true)
 
-fun getSeriesViaId(id: String) = Jsoup.connect(SERIES_INFO + id).ignoreContentType(true).execute().body()
+fun getSeriesViaId(id: String): String {
+    return try {
+        Jsoup.connect(SERIES_INFO + id).ignoreContentType(true).execute().body()
+    } catch (statusException: Exception) {
+        "null"
+    }
+}
 
 fun getSeriesViaKeyword(keyword: String): String {
     val json = Jsoup.connect(SERIES_SEARCH + parametrize(keyword)).ignoreContentType(true).execute().body()

@@ -77,7 +77,7 @@ class TestHotCorn {
             )
         ).run().apply { assert(succeeded()) }
     }
-    
+
     @Test
     fun `Invalid ID Returns Empty Response`() {
         TestCase(
