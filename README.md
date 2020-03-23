@@ -1,12 +1,12 @@
 ![GitHub top language](https://img.shields.io/github/languages/top/latiif/HotCorn?color=%23F18E33&label=kotlin&logo=Kotlin&logoColor=%23F18E33&style=for-the-badge) ![GitHub last commit](https://img.shields.io/github/last-commit/latiif/HotCorn?style=for-the-badge) ![GitHub release (latest by date)](https://img.shields.io/github/v/release/latiif/HotCorn?style=for-the-badge)
 
-**HotCorn** 
+**HotCorn**
 
 Kotlin wrapper tool to check for TV shows updates using the [Popcorntime api](https://popcornofficial.docs.apiary.io/#reference/show )
 
 **Grab it**
 
-Just download it from [here](https://github.com/latiif/HotCorn/releases/download/v0.7/HotCorn.jar), or via the terminal by running:
+Just download it from [here](https://github.com/latiif/HotCorn/releases/download/v0.8/HotCorn.jar), or via the terminal by running:
 
 `wget https://github.com/latiif/HotCorn/releases/download/v0.8/HotCorn.jar`
 
@@ -49,7 +49,7 @@ This argument represents the timestamp at which the latest check for updates was
 Pass in 0 to get the latest episode.
 
 *Epsilon*
-**OPTIONAL - DEFAULT VALUE = 0** 
+**OPTIONAL - DEFAULT VALUE = 0**
 Due to the fact that popcorn shows are not uploaded once they are aired and that the tool looks at the first aired data to determine wheter an episode is new or not, an optional *epsilon* time _in hours_ is added to the *unix epoch* to allow for retrieval of episodes that aired *epsilon* hours ago.
 
 *TV Shows*
@@ -64,7 +64,7 @@ You can mix id's with keywords.
 This examples identifies Rick and Morty by its name, and Game of Thrones by its id. It returns the episodes' Overview `O`, Show title `S` and episode number `e`.
 
 ```bash
-java -jar Hotcorn.jar OSE 0 
+java -jar Hotcorn.jar OSE 0
 > "rick and morty"
 > tt0944947
 ```
@@ -87,7 +87,7 @@ In this example we get *ALL* episodes of Vikings aired after January 1st 2020 i.
 
 ```bash
 java -jar HotCorn.jar sTEM 1577842429
-> 1577842429 
+> 1577842429
 > Vikings
 ```
 
@@ -127,13 +127,12 @@ This outputs _(as of early 2020)_:
 
 **Building from source**
 
-In order to be able to download and use the code you have to have `git` and `maven` installed 
+In order to be able to download and use the code you have to have `git` and `maven` installed
 
 From within the folder you want to have the code installed run the following command
 
  `git clone https://github.com/latiif/HotCorn && cd HotCorn &&  mvn clean package`
 
-This command will download the code and build it using `maven`. 
+This command will download the code and build it using `maven`.
 
-The resulting jar files will reside inside in `HotCorn/target` 
-
+The resulting jar files will reside inside in `HotCorn/target`
