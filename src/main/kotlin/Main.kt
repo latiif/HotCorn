@@ -5,10 +5,10 @@ import llusx.hotcorn.app.core.*
 object Main {
     @JvmStatic
     fun main(args: Array<String>) {
-        executeCommand(args, ::readLine)
+        executeCommand(args, ::readLine, ::println)
     }
 
-    fun executeCommand(args: Array<String>, inputReader: () -> String?) {
+    fun executeCommand(args: Array<String>, inputReader: () -> String?, outputWriter: (Any?) -> Unit) {
 
         val options = if (args.size > 1)
             args[0]
@@ -35,7 +35,7 @@ object Main {
             return
         }
 
-        val epsilonIndex = args.lastIndexOf("-epsilon");
+        val epsilonIndex = args.lastIndexOf("-epsilon")
         val epsilon = if (epsilonIndex != -1) {
             args[epsilonIndex + 1].toInt()
         } else {
@@ -43,8 +43,9 @@ object Main {
         }
 
         val shows = generateSequence(inputReader).filter(String::isNotBlank).toList()
-        val result = checkForUpdates(lastCheck, epsilon, shows, getMultipleEpisodes, includeAll, getLatest)
+        val hotcorn = HotCornClient(outputWriter)
+        val result = hotcorn.checkForUpdates(lastCheck, epsilon, shows, getMultipleEpisodes, includeAll, getLatest)
 
-        result.forEach { printEpisode(it, options) }
+        result.forEach { hotcorn.printEpisode(it, options) }
     }
 }

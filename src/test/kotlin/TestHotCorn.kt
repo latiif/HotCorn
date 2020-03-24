@@ -1,5 +1,4 @@
 import llusx.hotcorn.app.Main
-import llusx.hotcorn.app.core.write
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import java.lang.StringBuilder
@@ -40,8 +39,8 @@ class TestHotCorn {
 
         val inputSender = InputSender(shows)
         val bucket = OutputBucket()
-        write = bucket::capture
-        Main.executeCommand(args.toTypedArray(), inputSender::readLine)
+
+        Main.executeCommand(args.toTypedArray(), inputSender::readLine, bucket::capture)
 
         bucket.flush().also { output ->
             return Assessment(this.result.all { episode ->
