@@ -3,7 +3,6 @@ package llusx.hotcorn.app.core
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import java.io.InputStream
-import java.lang.StringBuilder
 import java.util.*
 import org.jsoup.Jsoup
 
@@ -164,13 +163,10 @@ class HotCornClient(val write: (Any?) -> Unit = ::println) {
     }
 
     private fun JsonObject.toCSV(): String {
-        var sb = StringBuilder()
-
-        this.keySet().forEach {
-            val prop = this[it]
-            sb = sb.append(prop.asJsonPrimitive.toString().replace("\"", "")).append(", ")
-        }
-        return sb.toString().removeSuffix(", ")
+    return this.keySet()
+        .map(this::get)
+        .map {it.asJsonPrimitive}
+        .joinToString(", ")
     }
 
     private fun retrieveBestTorrent(torrentsObject: JsonObject): String {

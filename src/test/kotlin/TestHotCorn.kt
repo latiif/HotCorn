@@ -1,7 +1,7 @@
+import java.lang.StringBuilder
 import llusx.hotcorn.app.Main
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
-import java.lang.StringBuilder
 
 typealias Assessment = Pair<Boolean, String>
 
@@ -28,7 +28,6 @@ class TestHotCorn {
     }
 
     data class TestCase(val flags: String, val afterEpoch: String, val shows: List<String>, val result: List<String>)
-
 
     fun TestCase.run(): Assessment {
         val args = mutableListOf<String>()
@@ -96,6 +95,21 @@ class TestHotCorn {
             result = listOf()
         ).run().apply {
             assert(succeeded() and response().isEmpty())
+        }
+    }
+
+    @Test
+    fun `Check CSV Format`() {
+        TestCase(
+            flags = "MSecs",
+            shows = listOf("Vikings"),
+            afterEpoch = "0",
+            result = listOf(
+                "\"Vikings\", 6, 7395843",
+                "\"Vikings\", 3, 5138072"
+            )
+        ).run().apply {
+            assert(succeeded())
         }
     }
 }
