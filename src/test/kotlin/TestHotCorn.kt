@@ -11,16 +11,14 @@ fun Assessment.response() = this.second
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class TestHotCorn {
+
     class InputSender(val items: List<String>) {
-        var i = 0
-        fun readLine(): String? {
-            if (i >= items.size) return null
-            return items[i++]
-        }
+        private var i = 0
+        fun readLine() = items.drop(i++).firstOrNull()
     }
 
     class OutputBucket() {
-        val sb = StringBuilder()
+        private val sb = StringBuilder()
         fun capture(messages: Any?) {
             sb.append(messages)
         }
