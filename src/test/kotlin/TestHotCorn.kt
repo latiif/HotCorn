@@ -1,4 +1,6 @@
 import java.lang.StringBuilder
+import java.text.SimpleDateFormat
+import java.time.format.DateTimeFormatter
 import llusx.hotcorn.app.Main
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
@@ -27,6 +29,10 @@ class TestHotCorn {
         }
     }
 
+    private fun String.toEpoch(): String {
+            val date = SimpleDateFormat("dd-MM-yyyy").parse(this)
+            return "${date.time/1000}" // get epoch in seconds
+    }
     data class TestCase(val flags: String, val afterEpoch: String, val shows: List<String>, val result: List<String>)
 
     fun TestCase.run(): Assessment {
@@ -53,7 +59,7 @@ class TestHotCorn {
         TestCase(
             flags = "sTEM",
             shows = listOf("Vikings"),
-            afterEpoch = "1577842429",
+            afterEpoch = "01-01-2020".toEpoch(),
             result = listOf(
                 "{\"title\":\"The Key\",\"episode\":5,\"season\":6}",
                 "{\"title\":\"The Best Laid Plans\",\"episode\":10,\"season\":6}"
@@ -66,7 +72,7 @@ class TestHotCorn {
         TestCase(
             flags = "S",
             shows = listOf("vikings", "rick and morty"),
-            afterEpoch = "0",
+            afterEpoch = "15-10-1994".toEpoch(),
             result = listOf(
                 "Vikings",
                 "Rick and Morty"
@@ -79,7 +85,7 @@ class TestHotCorn {
         TestCase(
             flags = "S",
             shows = listOf("wqeqweqweqwrq"), // random gibberish keyword
-            afterEpoch = "0",
+            afterEpoch = "21-02-1994".toEpoch(),
             result = listOf()
         ).run().apply {
             assert(succeeded() and response().isEmpty())
@@ -91,7 +97,7 @@ class TestHotCorn {
         TestCase(
             flags = "S",
             shows = listOf("", " ", "" + "\t"), // Empty strings
-            afterEpoch = "0",
+            afterEpoch = "30-10-2019".toEpoch(),
             result = listOf()
         ).run().apply {
             assert(succeeded() and response().isEmpty())
