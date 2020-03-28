@@ -31,7 +31,6 @@ class TestHotCorn {
         }
     }
 
-
     @Test
     fun `Get Information on Multiple Series`() {
         TestCase(

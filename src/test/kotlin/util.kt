@@ -1,9 +1,7 @@
 package llusx.hotcorn.test
 
-
-import java.text.SimpleDateFormat
-import java.time.format.DateTimeFormatter
 import java.lang.StringBuilder
+import java.text.SimpleDateFormat
 import llusx.hotcorn.app.Main
 
 typealias Assessment = Pair<Boolean, String>
@@ -29,8 +27,8 @@ class OutputBucket() {
 }
 
 fun String.toEpoch(): String {
-        val date = SimpleDateFormat("dd-MM-yyyy").parse(this)
-        return "${date.time / 1000}" // get epoch in seconds
+    val date = SimpleDateFormat("dd-MM-yyyy").parse(this)
+    return "${date.time / 1000}" // get epoch in seconds
 }
 
 fun TestCase.run(): Assessment {

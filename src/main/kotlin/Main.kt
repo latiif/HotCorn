@@ -1,7 +1,6 @@
 package llusx.hotcorn.app
 
 import java.text.SimpleDateFormat
-import java.time.format.DateTimeFormatter
 import llusx.hotcorn.app.core.*
 
 fun String.toEpoch(): Long {
@@ -34,7 +33,7 @@ object Main {
         }
 
         val lastCheck: Long = when {
-            args[1] matches Regex("[0-9]+") ->  args[1].toLong()
+            args[1] matches Regex("[0-9]+") -> args[1].toLong()
             args[1].isNotEmpty() -> args[1].toEpoch()
             else -> {
                 println("ERROR: Last check timestamp is invalid: " + args[1])

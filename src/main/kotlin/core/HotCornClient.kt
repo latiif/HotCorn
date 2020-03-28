@@ -165,7 +165,7 @@ class HotCornClient(val write: (Any?) -> Unit = ::println) {
     private fun JsonObject.toCSV(): String {
     return this.keySet()
         .map(this::get)
-        .map {it.asJsonPrimitive}
+        .map { it.asJsonPrimitive }
         .joinToString(", ")
     }
 
