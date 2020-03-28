@@ -1,3 +1,5 @@
+package llusx.hotcorn.test
+
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 
@@ -16,6 +18,19 @@ class TestHotCorn {
             )
         ).run().apply { assert(succeeded()) }
     }
+
+    @Test
+    fun `Get Episodes in Date Format`() {
+        TestCase(
+            flags = "sTEM",
+            shows = listOf("Vikings"),
+            afterEpoch = "01-01-2020",
+            result = listOf()
+        ).run().apply {
+            assert(succeeded() and response().isNotEmpty())
+        }
+    }
+
 
     @Test
     fun `Get Information on Multiple Series`() {

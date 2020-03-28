@@ -1,6 +1,9 @@
-import java.lang.StringBuilder
+package llusx.hotcorn.test
+
+
 import java.text.SimpleDateFormat
 import java.time.format.DateTimeFormatter
+import java.lang.StringBuilder
 import llusx.hotcorn.app.Main
 
 typealias Assessment = Pair<Boolean, String>

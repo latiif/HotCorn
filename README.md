@@ -6,10 +6,7 @@ Kotlin wrapper tool to check for TV shows updates using the [Popcorntime api](ht
 
 **Grab it**
 
-Just download it from [here](https://github.com/latiif/HotCorn/releases/download/v0.8/HotCorn.jar), or via the terminal by running:
-
-`wget https://github.com/latiif/HotCorn/releases/download/v0.8/HotCorn.jar`
-
+Just download it from [here](https://github.com/latiif/HotCorn/releases/latest/)
 **Running HotCorn**
 
 This requires you to have `JRE` installed on your machine
@@ -47,6 +44,7 @@ When using Hotcorn commandline tool, you first need to pass in the mandatory opt
 *Unix epoch*
 This argument represents the timestamp at which the latest check for updates was performed.
 Pass in 0 to get the latest episode.
+🆕 You can use the human-readable format `dd-MM-yyyy` instead of timestamp, e.g. `"02-10-2019"`.
 
 *Epsilon*
 **OPTIONAL - DEFAULT VALUE = 0**
@@ -86,8 +84,7 @@ This outputs _(as of early 2020)_:
 In this example we get *ALL* episodes of Vikings aired after January 1st 2020 i.e. _1577842429_.
 
 ```bash
-java -jar HotCorn.jar sTEM 1577842429
-> 1577842429
+java -jar HotCorn.jar sTEM "01-01-2020"
 > Vikings
 ```
 
