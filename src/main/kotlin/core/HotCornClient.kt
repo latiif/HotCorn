@@ -143,7 +143,7 @@ class HotCornClient(val write: (Any?) -> Unit = ::println) {
         val result = mutableListOf<String>()
 
         shows.forEach {
-            val seriesPage = getSeriesViaId(it).nullIfEqualTo("null") ?: getSeriesViaKeyword(it)
+            val seriesPage = getSeriesViaId(it) nullIfEqualTo "null" ?: getSeriesViaKeyword(it)
 
             val episodeStrings = if (multipleEpisodes) {
                 getLatestEpisodes(seriesPage, lastCheck)
@@ -174,7 +174,7 @@ class HotCornClient(val write: (Any?) -> Unit = ::println) {
 
         for (resolution in options) {
             try {
-                return torrentsObject.get(resolution).asJsonObject.get("url").asString
+                return torrentsObject[resolution].asJsonObject["url"].asString
             } catch (e: IllegalStateException) {
                 continue
             }
@@ -182,5 +182,5 @@ class HotCornClient(val write: (Any?) -> Unit = ::println) {
         return ""
     }
 
-    private fun String.nullIfEqualTo(str: String) = if (this == str) null else this
+    private infix fun String.nullIfEqualTo(str: String) = if (this == str) null else this
 }
