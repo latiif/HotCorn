@@ -1,4 +1,4 @@
-package llusx.hotcorn.app.core
+package latiif.hotcorn.app.core
 
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser

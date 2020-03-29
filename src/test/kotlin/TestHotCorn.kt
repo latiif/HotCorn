@@ -1,4 +1,4 @@
-package llusx.hotcorn.test
+package latiif.hotcorn.test
 
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance

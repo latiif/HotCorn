@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
+<project xmlns="http://maven.apache.org/POM/4.0.0" 
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>llusx.hotcorn.app</groupId>
+    <groupId>latiif.hotcorn.app</groupId>
     <artifactId>HotCorn</artifactId>
     <version>0.8</version>
 
     <properties>
         <kotlin.version>1.3.71</kotlin.version>
-        <main.class>llusx.hotcorn.app.Main</main.class>
+        <main.class>latiif.hotcorn.app.Main</main.class>
     </properties>
 
     <dependencies>

@@ -1,7 +1,7 @@
-package llusx.hotcorn.app
+package latiif.hotcorn.app
 
 import java.text.SimpleDateFormat
-import llusx.hotcorn.app.core.*
+import latiif.hotcorn.app.core.*
 
 fun String.toEpoch(): Long {
         val date = SimpleDateFormat("dd-MM-yyyy").parse(this)

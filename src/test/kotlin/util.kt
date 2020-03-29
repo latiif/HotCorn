@@ -1,8 +1,8 @@
-package llusx.hotcorn.test
+package latiif.hotcorn.test
 
 import java.lang.StringBuilder
 import java.text.SimpleDateFormat
-import llusx.hotcorn.app.Main
+import latiif.hotcorn.app.Main
 
 typealias Assessment = Pair<Boolean, String>
 
