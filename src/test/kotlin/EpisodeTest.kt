@@ -1,12 +1,9 @@
 package llusx.hotcorn.test
 
 import com.google.gson.Gson
+import llusx.hotcorn.app.core.Episode
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
-import com.google.gson.JsonObject
-import com.google.gson.JsonParser
-import llusx.hotcorn.app.core.Episode
-import org.junit.jupiter.api.Assertions
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class TestEpisode {
