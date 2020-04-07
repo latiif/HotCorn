@@ -1,7 +1,6 @@
 package latiif.hotcorn.app.core
 
 import com.google.gson.GsonBuilder
-import llusx.hotcorn.app.core.Episode
 
 object EpisodeParser {
     fun String.asEpisode(): Episode {

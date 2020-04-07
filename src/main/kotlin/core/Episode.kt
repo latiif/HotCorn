@@ -1,4 +1,4 @@
-package llusx.hotcorn.app.core
+package latiif.hotcorn.app.core
 
 data class Episode(
     val firstAired: Long,
