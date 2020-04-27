@@ -7,8 +7,8 @@ import java.util.*
 import org.jsoup.Jsoup
 
 class HotCornClient(val write: (Any?) -> Unit = ::println) {
-    private val SERIES_INFO = "https://tv-v2.api-fetch.website/show/"
-    private val SERIES_SEARCH = "https://tv-v2.api-fetch.website/shows/1?sort=rating&order=-1&genre=all&keywords="
+    private val SERIES_INFO = "https://tv-v2.api-fetch.sh/show/"
+    private val SERIES_SEARCH = "https://tv-v2.api-fetch.sh/shows/1?sort=rating&order=-1&genre=all&keywords="
 
     private val EPSILON_FACTOR = 3600 // hours to seconds
 
