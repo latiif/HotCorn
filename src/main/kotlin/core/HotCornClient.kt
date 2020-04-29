@@ -7,9 +7,6 @@ import java.util.*
 import org.jsoup.Jsoup
 
 class HotCornClient(val write: (Any?) -> Unit = ::println) {
-    private val SERIES_INFO = "https://tv-v2.api-fetch.sh/show/"
-    private val SERIES_SEARCH = "https://tv-v2.api-fetch.sh/shows/1?sort=rating&order=-1&genre=all&keywords="
-
     private val EPSILON_FACTOR = 3600 // hours to seconds
 
     private fun InputStream.getAll() = bufferedReader().use { it.readText() }
@@ -18,14 +15,14 @@ class HotCornClient(val write: (Any?) -> Unit = ::println) {
 
     private fun getSeriesViaId(id: String): String {
         return try {
-            Jsoup.connect(SERIES_INFO + id).ignoreContentType(true).execute().body()
+            Jsoup.connect(Backend.getSeriesInfoUrl() + id).ignoreContentType(true).execute().body()
         } catch (statusException: Exception) {
             "null"
         }
     }
 
     private fun getSeriesViaKeyword(keyword: String): String {
-        val json = Jsoup.connect(SERIES_SEARCH + parametrize(keyword)).ignoreContentType(true).execute().body()
+        val json = Jsoup.connect(Backend.getSeriesSearchUrl() + parametrize(keyword)).ignoreContentType(true).execute().body()
         if (json.equals("null")) return "null"
         val jsonElement = JsonParser().parse(json)
 
