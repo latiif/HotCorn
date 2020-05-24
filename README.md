@@ -1,4 +1,4 @@
-![Website](https://img.shields.io/website?label=Popcorn&style=for-the-badge&url=https%3A%2F%2Ftv-v2.api-fetch.website%2F) ![GitHub top language](https://img.shields.io/github/languages/top/latiif/HotCorn?color=%23F18E33&label=kotlin&logo=Kotlin&logoColor=%23F18E33&style=for-the-badge) ![GitHub last commit](https://img.shields.io/github/last-commit/latiif/HotCorn?style=for-the-badge) ![GitHub release (latest by date)](https://img.shields.io/github/v/release/latiif/HotCorn?style=for-the-badge)
+![Website](https://img.shields.io/website?label=Popcorn%20Backend&style=for-the-badge&url=https://tv-v2.api-fetch.sh/status) ![GitHub top language](https://img.shields.io/github/languages/top/latiif/HotCorn?color=%23F18E33&label=kotlin&logo=Kotlin&logoColor=%23F18E33&style=for-the-badge) ![GitHub last commit](https://img.shields.io/github/last-commit/latiif/HotCorn?style=for-the-badge) ![GitHub release (latest by date)](https://img.shields.io/github/v/release/latiif/HotCorn?style=for-the-badge)
 
 **HotCorn**
 
