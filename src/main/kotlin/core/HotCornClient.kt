@@ -136,7 +136,7 @@ class HotCornClient(val write: (Any?) -> Unit = ::println) {
             write(episodeInfo.toString())
     }
 
-    public fun checkForUpdates(lastCheck: Long, epsilon: Int, shows: List<String>, multipleEpisodes: Boolean = true, includeAll: Boolean = false, getLatest: Boolean = false): MutableList<String> {
+    fun checkForUpdates(lastCheck: Long, epsilon: Int, shows: List<String>, multipleEpisodes: Boolean = true, includeAll: Boolean = false, getLatest: Boolean = false): List<String> {
         val result = mutableListOf<String>()
 
         shows.forEach {
