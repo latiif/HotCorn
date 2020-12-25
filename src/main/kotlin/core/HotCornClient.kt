@@ -2,6 +2,7 @@ package latiif.hotcorn.app.core
 
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
+import latiif.hotcorn.app.core.EpisodeParser.asEpisode
 import java.io.InputStream
 import java.util.*
 import org.jsoup.Jsoup
@@ -22,7 +23,8 @@ class HotCornClient(val write: (Any?) -> Unit = ::println) {
     }
 
     private fun getSeriesViaKeyword(keyword: String): String {
-        val json = Jsoup.connect(Backend.getSeriesSearchUrl() + parametrize(keyword)).ignoreContentType(true).execute().body()
+        val json =
+            Jsoup.connect(Backend.getSeriesSearchUrl() + parametrize(keyword)).ignoreContentType(true).execute().body()
         if (json.equals("null")) return "null"
         val jsonElement = JsonParser().parse(json)
 
@@ -39,8 +41,8 @@ class HotCornClient(val write: (Any?) -> Unit = ::println) {
         return jarray.toString()
     }
 
-    private fun getLatestEpisode(json: String): String {
-        if (json.equals("null")) return "null"
+    private fun getLatestEpisode(json: String): Episode? {
+        if (json == "null") return null
 
         val jelement = JsonParser().parse(json)
         val jobject = jelement.getAsJsonObject()
@@ -50,85 +52,73 @@ class HotCornClient(val write: (Any?) -> Unit = ::println) {
         val latestEpisode = jarray.maxBy { it.asJsonObject.get("first_aired").asLong }
         latestEpisode?.asJsonObject?.addProperty("show_title", jobject["title"].asString)
 
-        return latestEpisode.toString()
+        return latestEpisode.toString().asEpisode()
     }
 
-    private fun getLatestEpisodes(json: String, epoch: Long): List<String> {
-        if (json.equals("null")) return listOf()
-
+    private fun getLatestEpisodes(json: String, epoch: Long): List<Episode> {
+        if (json == "null") return listOf()
         val jelement = JsonParser().parse(json)
         val jobject = jelement.getAsJsonObject()
-
         val jarray = jobject.getAsJsonArray("episodes")
-
-        val latestEpisodes = mutableListOf<String>()
-        jarray.forEach {
+        return jarray.mapNotNull {
             val episodeEpoch: Long = it.asJsonObject.get("first_aired").asLong
 
             if (episodeEpoch > epoch) {
                 it.asJsonObject.addProperty("show_title", jobject["title"].asString)
-                latestEpisodes.add(it.toString())
+                it.toString().asEpisode()
+            } else {
+                null
             }
         }
-        return latestEpisodes
     }
 
-    private fun isNew(episode: String, lastCheck: Long, epsilon: Int): Boolean {
-        episode.nullIfEqualTo("null") ?: return false
-
-        val jelement = JsonParser().parse(episode)
-        val jobject = jelement.asJsonObject
-        val episodeEpoch = jobject["first_aired"].asLong
-
-        return (episodeEpoch + epsilon * EPSILON_FACTOR) > lastCheck
+    private fun isNew(episode: Episode, lastCheck: Long, epsilon: Int): Boolean {
+        return (episode.firstAired + epsilon * EPSILON_FACTOR) > lastCheck
     }
 
-    public fun printEpisode(episode: String, options: String = "A") {
-        if (episode == "null" || episode == "") {
+    public fun printEpisode(episode: Episode?, options: String = "A") {
+        if (episode == null) {
             write(""); return
         }
 
-        val printEpisodeId = "e" in options
-        val printCSV = "c" in options
-        val getTorrent = "t" in options
         val printAll = "A" in options
-        val printTorrents = "D" in options
-        val printFirstAiredEpoch = "P" in options
-        val printFirstAired = "F" in options
-        val printOverview = "O" in options
-        val printTitle = "T" in options
-        val printEpisode = "E" in options
-        val printSeason = "s" in options
-        val printShow = "S" in options
+        val printEpisodeId = "e" in options || printAll
+        val printCSV = "c" in options || printAll
+        val getTorrent = "t" in options || printAll
+        val printTorrents = "D" in options || printAll
+        val printFirstAiredEpoch = "P" in options || printAll
+        val printFirstAired = "F" in options || printAll
+        val printOverview = "O" in options || printAll
+        val printTitle = "T" in options || printAll
+        val printEpisode = "E" in options || printAll
+        val printSeason = "s" in options || printAll
+        val printShow = "S" in options || printAll
 
-        val jelement = JsonParser().parse(episode)
-        val jobject = jelement.asJsonObject
-        val episodeEpoch = jobject["first_aired"].asLong
+        val episodeEpoch = episode.firstAired
 
         val netDate = Date(episodeEpoch * 1000)
 
         val episodeInfo = JsonObject()
 
-        if (getTorrent) episodeInfo.addProperty("torrent", retrieveBestTorrent(jobject["torrents"].asJsonObject))
+        if (getTorrent) episodeInfo.addProperty("torrent", retrieveBestTorrent(episode.torrents))
 
-        if (printAll) {
-            jobject.addProperty("first_aired_utc", netDate.toString())
-
-            write(jobject.toString())
-            return
+        if (printTorrents) {
+            val torrents = JsonObject()
+            episode.torrents.forEach {
+                torrents.addProperty(it.key, it.value)
+            }
+            episodeInfo.add("torrents", torrents)
         }
-
-        if (printTorrents) episodeInfo.add("torrents", jobject["torrents"])
-        if (printFirstAiredEpoch) episodeInfo.add("first_aired", jobject["first_aired"])
+        if (printFirstAiredEpoch) episodeInfo.addProperty("first_aired", episode.firstAired)
         if (printFirstAired) episodeInfo.addProperty("first_aired_utc", netDate.toString())
 
-        if (printShow) episodeInfo.add("show_title", jobject["show_title"])
+        if (printShow) episodeInfo.addProperty("show_title", episode.showTitle)
 
-        if (printOverview) episodeInfo.add("overview", jobject["overview"])
-        if (printTitle) episodeInfo.add("title", jobject["title"])
-        if (printEpisode) episodeInfo.add("episode", jobject["episode"])
-        if (printSeason) episodeInfo.add("season", jobject["season"])
-        if (printEpisodeId) episodeInfo.add("episodeID", jobject["tvdb_id"])
+        if (printOverview) episodeInfo.addProperty("overview", episode.overview)
+        if (printTitle) episodeInfo.addProperty("title", episode.title)
+        if (printEpisode) episodeInfo.addProperty("episode", episode.episode)
+        if (printSeason) episodeInfo.addProperty("season", episode.season)
+        if (printEpisodeId) episodeInfo.addProperty("episodeID", episode.tvdbId)
 
         if (printCSV)
             write(episodeInfo.toCSV())
@@ -136,47 +126,45 @@ class HotCornClient(val write: (Any?) -> Unit = ::println) {
             write(episodeInfo.toString())
     }
 
-    fun checkForUpdates(lastCheck: Long, epsilon: Int, shows: List<String>, multipleEpisodes: Boolean = true, includeAll: Boolean = false, getLatest: Boolean = false): List<String> {
-        val result = mutableListOf<String>()
-
+    fun checkForUpdates(
+        lastCheck: Long,
+        epsilon: Int,
+        shows: List<String>,
+        multipleEpisodes: Boolean = true,
+        includeAll: Boolean = false,
+        getLatest: Boolean = false
+    ): List<Episode?> {
+        val result = mutableListOf<Episode?>()
         shows.forEach {
             val seriesPage = getSeriesViaId(it) nullIfEqualTo "null" ?: getSeriesViaKeyword(it)
-
-            val episodeStrings = if (multipleEpisodes) {
+            val episodes = if (multipleEpisodes) {
                 getLatestEpisodes(seriesPage, lastCheck)
             } else {
                 listOf(getLatestEpisode(seriesPage))
             }
-
-            for (episodeString in episodeStrings) {
-                val isNewEpisode = isNew(episodeString, lastCheck, epsilon) || getLatest
+            episodes.filterNotNull().forEach { episode ->
+                val isNewEpisode = isNew(episode, lastCheck, epsilon) || getLatest
                 if (includeAll) {
-                    result.add(if (isNewEpisode) episodeString else "")
+                    result.add(if (isNewEpisode) episode else null)
                 }
-                if (isNewEpisode && !includeAll) result.add(episodeString)
+                if (isNewEpisode && !includeAll) result.add(episode)
             }
         }
         return result
     }
 
     private fun JsonObject.toCSV(): String {
-    return this.keySet()
-        .map(this::get)
-        .map { it.asJsonPrimitive }
-        .joinToString(", ")
+        return this.keySet()
+            .map(this::get)
+            .map { it.asJsonPrimitive }
+            .joinToString(", ")
     }
 
-    private fun retrieveBestTorrent(torrentsObject: JsonObject): String {
+    private fun retrieveBestTorrent(torrentsObject: Map<String, String>): String {
         val options = listOf("1080p", "720p", "480p", "0")
-
-        for (resolution in options) {
-            try {
-                return torrentsObject[resolution].asJsonObject["url"].asString
-            } catch (e: IllegalStateException) {
-                continue
-            }
+        return options.first {
+            torrentsObject[it] != null
         }
-        return ""
     }
 
     private infix fun String.nullIfEqualTo(str: String) = if (this == str) null else this
