@@ -2,9 +2,9 @@ package latiif.hotcorn.app.core
 
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
-import latiif.hotcorn.app.core.EpisodeParser.asEpisode
 import java.io.InputStream
 import java.util.*
+import latiif.hotcorn.app.core.EpisodeParser.asEpisode
 import org.jsoup.Jsoup
 
 class HotCornClient(val write: (Any?) -> Unit = ::println) {
@@ -160,12 +160,17 @@ class HotCornClient(val write: (Any?) -> Unit = ::println) {
             .joinToString(", ")
     }
 
-    private fun retrieveBestTorrent(torrentsObject: Map<String, String>): String {
-        val options = listOf("1080p", "720p", "480p", "0")
-        return options.first {
-            torrentsObject[it] != null
-        }
-    }
-
     private infix fun String.nullIfEqualTo(str: String) = if (this == str) null else this
+}
+
+fun retrieveBestTorrent(torrentsObject: Map<String, String>): String? {
+    val options = listOf("1080p", "720p", "480p", "0")
+    return options.fold(null as String?, { torrent, resolution ->
+        torrent
+            ?: if (!torrentsObject[resolution].isNullOrEmpty()) {
+                torrentsObject[resolution]
+            } else {
+                null
+            }
+    })
 }
