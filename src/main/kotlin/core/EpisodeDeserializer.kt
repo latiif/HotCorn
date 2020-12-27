@@ -17,7 +17,11 @@ class EpisodeDeserializer : JsonDeserializer<Episode> {
 
         val torrents = buildMap<String, String> {
             ((json get "torrents")?.asJsonObject ?: JsonObject()).entrySet().forEach {
-                this[it.key] = it.value.asJsonObject["url"].asString
+                 try {
+                    this[it.key] = it.value.asJsonObject["url"].asString
+                }catch (e: Exception){
+                    return@forEach
+                }
             }
         }
         return Episode(
