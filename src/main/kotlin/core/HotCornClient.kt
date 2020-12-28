@@ -8,7 +8,7 @@ import latiif.hotcorn.app.core.EpisodeParser.asEpisode
 import org.jsoup.Jsoup
 
 class HotCornClient(val write: (Any?) -> Unit = ::println) {
-    private val EPSILON_FACTOR = 3600 // hours to seconds
+    private val epsilonFactor = 3600 // in seconds
 
     private fun InputStream.getAll() = bufferedReader().use { it.readText() }
 
@@ -23,40 +23,44 @@ class HotCornClient(val write: (Any?) -> Unit = ::println) {
     }
 
     private fun getSeriesViaKeyword(keyword: String): String {
-        val json =
+        val rawSeriesJson =
             Jsoup.connect(Backend.getSeriesSearchUrl() + parametrize(keyword)).ignoreContentType(true).execute().body()
-        if (json.equals("null")) return "null"
-        val jsonElement = JsonParser().parse(json)
+        if (rawSeriesJson == "null") return "null"
+        val series = JsonParser().parse(rawSeriesJson)
 
-        val jobject = jsonElement.asJsonArray
-        if (jobject.size() == 0) return "null"
-        return getSeriesViaId(jobject[0].asJsonObject.get("imdb_id").asString)
+        val matches = series.asJsonArray
+        if (matches.size() == 0) return "null"
+        return getSeriesViaId(matches[0].asJsonObject.get("imdb_id").asString)
     }
 
-    private fun getLatestEpisode(json: String): Episode? {
-        if (json == "null") return null
+    private fun getLatestEpisode(rawShow: String): Episode? {
+        if (rawShow == "null") return null
+        val show = JsonParser()
+            .parse(rawShow)
+            .asJsonObject
 
-        val jelement = JsonParser().parse(json)
-        val jobject = jelement.getAsJsonObject()
+        val showTitle = show["title"].asString
+        val episodes = show.getAsJsonArray("episodes")
 
-        val jarray = jobject.getAsJsonArray("episodes")
-
-        val latestEpisode = jarray.maxByOrNull { it.asJsonObject.get("first_aired").asLong }
-        latestEpisode?.asJsonObject?.addProperty("show_title", jobject["title"].asString)
+        val latestEpisode = episodes.maxByOrNull { it.asJsonObject.get("first_aired").asLong }
+        latestEpisode?.asJsonObject?.addProperty("show_title", showTitle)
 
         return latestEpisode.toString().asEpisode()
     }
 
-    private fun getLatestEpisodes(json: String, epoch: Long): List<Episode> {
-        if (json == "null") return listOf()
-        val jelement = JsonParser().parse(json)
-        val jobject = jelement.getAsJsonObject()
-        val jarray = jobject.getAsJsonArray("episodes")
-        return jarray.mapNotNull {
-            val episodeEpoch: Long = it.asJsonObject.get("first_aired").asLong
+    private fun getLatestEpisodes(rawShow: String, epoch: Long): List<Episode> {
+        if (rawShow == "null") return listOf()
+        val show = JsonParser()
+            .parse(rawShow)
+            .asJsonObject
 
+        val showTitle = show["title"].asString
+        val episodes = show.getAsJsonArray("episodes")
+
+        return episodes.mapNotNull {
+            val episodeEpoch: Long = it.asJsonObject.get("first_aired").asLong
             if (episodeEpoch > epoch) {
-                it.asJsonObject.addProperty("show_title", jobject["title"].asString)
+                it.asJsonObject.addProperty("show_title", showTitle)
                 it.toString().asEpisode()
             } else {
                 null
@@ -65,7 +69,7 @@ class HotCornClient(val write: (Any?) -> Unit = ::println) {
     }
 
     private fun isNew(episode: Episode, lastCheck: Long, epsilon: Int): Boolean {
-        return (episode.firstAired + epsilon * EPSILON_FACTOR) > lastCheck
+        return (episode.firstAired + epsilon * epsilonFactor) > lastCheck
     }
 
     fun printEpisode(episode: Episode?, options: String = "A") {
