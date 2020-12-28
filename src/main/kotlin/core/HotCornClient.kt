@@ -33,14 +33,6 @@ class HotCornClient(val write: (Any?) -> Unit = ::println) {
         return getSeriesViaId(jobject[0].asJsonObject.get("imdb_id").asString)
     }
 
-    private fun getEpisodes(json: String): String {
-        val jelement = JsonParser().parse(json)
-        val jobject = jelement.asJsonObject
-
-        val jarray = jobject.getAsJsonArray("episodes")
-        return jarray.toString()
-    }
-
     private fun getLatestEpisode(json: String): Episode? {
         if (json == "null") return null
 
