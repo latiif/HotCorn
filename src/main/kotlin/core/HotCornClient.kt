@@ -49,7 +49,7 @@ class HotCornClient(val write: (Any?) -> Unit = ::println) {
 
         val jarray = jobject.getAsJsonArray("episodes")
 
-        val latestEpisode = jarray.maxBy { it.asJsonObject.get("first_aired").asLong }
+        val latestEpisode = jarray.maxByOrNull { it.asJsonObject.get("first_aired").asLong }
         latestEpisode?.asJsonObject?.addProperty("show_title", jobject["title"].asString)
 
         return latestEpisode.toString().asEpisode()

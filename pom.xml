@@ -9,7 +9,7 @@
 
 
     <properties>
-        <kotlin.version>1.3.71</kotlin.version>
+        <kotlin.version>1.4.21</kotlin.version>
         <main.class>latiif.hotcorn.app.Main</main.class>
     </properties>
 
