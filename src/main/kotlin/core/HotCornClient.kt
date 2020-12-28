@@ -68,7 +68,7 @@ class HotCornClient(val write: (Any?) -> Unit = ::println) {
         return (episode.firstAired + epsilon * EPSILON_FACTOR) > lastCheck
     }
 
-    public fun printEpisode(episode: Episode?, options: String = "A") {
+    fun printEpisode(episode: Episode?, options: String = "A") {
         if (episode == null) {
             write(""); return
         }
