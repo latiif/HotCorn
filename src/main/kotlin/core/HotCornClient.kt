@@ -135,7 +135,7 @@ class HotCornClient(val write: (Any?) -> Unit = ::println) {
             getLatest: Boolean = false
     ): List<Episode?> {
         val result = mutableListOf<Episode?>()
-        shows.forEach {
+        shows.distinct().forEach {
             val seriesPage = getSeriesViaId(it) nullIfEqualTo "null" ?: getSeriesViaKeyword(it)
             val episodes =
                     if (multipleEpisodes) {
