@@ -8,7 +8,6 @@ import latiif.hotcorn.app.core.EpisodeParser.asEpisode
 import org.jsoup.Jsoup
 
 class HotCornClient(val write: (Any?) -> Unit = ::println) {
-    private val epsilonFactor = 3600 // in seconds
 
     private fun InputStream.getAll() = bufferedReader().use { it.readText() }
 
@@ -58,7 +57,7 @@ class HotCornClient(val write: (Any?) -> Unit = ::println) {
 
         return episodes.mapNotNull {
             val episode = it.toString().asEpisode()
-            if (isNew(episode, epoch, epsilon)) {
+            if (episode.isAiredAfter(epoch, epsilon)) {
                 Episode(
                         firstAired = episode.firstAired,
                         overview = episode.overview,
@@ -74,10 +73,6 @@ class HotCornClient(val write: (Any?) -> Unit = ::println) {
                 null
             }
         }
-    }
-
-    private fun isNew(episode: Episode, lastCheck: Long, epsilon: Int): Boolean {
-        return (episode.firstAired + epsilon * epsilonFactor) > lastCheck
     }
 
     fun printEpisode(episode: Episode?, options: String = "A") {
@@ -144,7 +139,7 @@ class HotCornClient(val write: (Any?) -> Unit = ::println) {
                         listOf(getLatestEpisode(seriesPage))
                     }
             episodes.filterNotNull().forEach { episode ->
-                val isNewEpisode = isNew(episode, lastCheck, epsilon) || getLatest
+                val isNewEpisode = episode.isAiredAfter(lastCheck, epsilon) || getLatest
                 if (includeAll) {
                     result.add(if (isNewEpisode) episode else null)
                 }
@@ -159,6 +154,11 @@ class HotCornClient(val write: (Any?) -> Unit = ::println) {
     }
 
     private infix fun String.nullIfEqualTo(str: String) = if (this == str) null else this
+}
+
+private fun Episode.isAiredAfter(lastCheck: Long, epsilon: Int): Boolean {
+    val epsilonFactor = 3600 // there are 3600 seconds in an hour; epsilon is given in hours
+    return (firstAired + epsilon * epsilonFactor) > lastCheck
 }
 
 fun retrieveBestTorrent(torrentsObject: Map<String, String>): String? {
