@@ -48,14 +48,14 @@ class HotCornClient(val write: (Any?) -> Unit = ::println) {
         return latestEpisode.toString().asEpisode()
     }
 
-    private fun getLatestEpisodes(rawShow: String, epoch: Long, epsilon: Int): List<Episode> {
-        if (rawShow == "null") return listOf()
+    private fun getLatestEpisodes(rawShow: String, epoch: Long, epsilon: Int): Sequence<Episode> {
+        if (rawShow == "null") return emptySequence()
         val show = JsonParser().parse(rawShow).asJsonObject
 
         val showTitle = show["title"].asString
         val episodes = show.getAsJsonArray("episodes")
 
-        return episodes.mapNotNull {
+        return episodes.asSequence().mapNotNull {
             val episode = it.toString().asEpisode()
             if (episode.isAiredAfter(epoch, epsilon)) {
                 Episode(
@@ -122,39 +122,42 @@ class HotCornClient(val write: (Any?) -> Unit = ::println) {
     }
 
     fun checkForUpdates(
-            lastCheck: Long,
-            epsilon: Int,
-            shows: List<String>,
-            multipleEpisodes: Boolean = true,
-            includeAll: Boolean = false,
-            getLatest: Boolean = false
-    ): List<Episode?> {
-        val result = mutableListOf<Episode?>()
-        shows.distinct().forEach {
-            val seriesPage = getSeriesViaId(it) nullIfEqualTo "null" ?: getSeriesViaKeyword(it)
-            val episodes =
+        lastCheck: Long,
+        epsilon: Int,
+        shows: List<String>,
+        multipleEpisodes: Boolean = true,
+        includeAll: Boolean = false,
+        getLatest: Boolean = false
+    ): Sequence<Episode?> {
+        return sequence {
+            shows.distinct().forEach {
+                val seriesPage = getSeriesViaId(it) nullIfEqualTo "null" ?: getSeriesViaKeyword(it)
+                val episodes =
                     if (multipleEpisodes) {
                         getLatestEpisodes(seriesPage, lastCheck, epsilon)
                     } else {
-                        listOf(getLatestEpisode(seriesPage))
+                        sequenceOf(getLatestEpisode(seriesPage))
                     }
-            episodes.filterNotNull().forEach { episode ->
-                val isNewEpisode = episode.isAiredAfter(lastCheck, epsilon) || getLatest
-                if (includeAll) {
-                    result.add(if (isNewEpisode) episode else null)
+                episodes.filterNotNull().forEach { episode ->
+                    val isNewEpisode = episode.isAiredAfter(lastCheck, epsilon) || getLatest
+                    if (includeAll) {
+                        yield(if (isNewEpisode) episode else null)
+                    }
+                    if (isNewEpisode && !includeAll) {
+                        yield(episode)
+                    }
                 }
-                if (isNewEpisode && !includeAll) result.add(episode)
             }
         }
-        return result
     }
-
-    private fun JsonObject.toCSV(): String {
-        return this.keySet().map(this::get).map { it.asJsonPrimitive }.joinToString(", ")
-    }
-
-    private infix fun String.nullIfEqualTo(str: String) = if (this == str) null else this
 }
+
+private fun JsonObject.toCSV(): String {
+    return this.keySet().map(this::get).map { it.asJsonPrimitive }.joinToString(", ")
+}
+
+private infix fun String.nullIfEqualTo(str: String) = if (this == str) null else this
+
 
 private fun Episode.isAiredAfter(lastCheck: Long, epsilon: Int): Boolean {
     val epsilonFactor = 3600 // there are 3600 seconds in an hour; epsilon is given in hours
@@ -164,13 +167,13 @@ private fun Episode.isAiredAfter(lastCheck: Long, epsilon: Int): Boolean {
 fun retrieveBestTorrent(torrentsObject: Map<String, String>): String? {
     val options = listOf("1080p", "720p", "480p", "0")
     return options.fold(
-            null as String?,
-            { torrent, resolution ->
-                torrent
-                        ?: if (!torrentsObject[resolution].isNullOrEmpty()) {
-                            torrentsObject[resolution]
-                        } else {
-                            null
-                        }
-            })
+        null as String?,
+        { torrent, resolution ->
+            torrent
+                ?: if (!torrentsObject[resolution].isNullOrEmpty()) {
+                    torrentsObject[resolution]
+                } else {
+                    null
+                }
+        })
 }
