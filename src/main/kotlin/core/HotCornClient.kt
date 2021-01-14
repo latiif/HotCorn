@@ -2,6 +2,7 @@ package latiif.hotcorn.app.core
 
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
+import com.github.opendevl.JFlat
 import java.io.InputStream
 import java.util.*
 import latiif.hotcorn.app.core.EpisodeParser.asEpisode
@@ -152,9 +153,41 @@ class HotCornClient(val write: (Any?) -> Unit = ::println) {
     }
 }
 
-private fun JsonObject.toCSV(): String {
-    return this.keySet().map(this::get).map { it.asJsonPrimitive }.joinToString(", ")
+private fun JsonObject.toCSV(delim: String = ", "): String {
+    val rawJson = this.toString()
+    val flattener = JFlat(rawJson)
+    val items = flattener.json2Sheet().getJsonAsSheet()
+
+    var comma: Boolean
+    val sb = StringBuilder()
+    items.forEach {
+        comma = false
+        it.forEach {
+            if (it == null) {
+                sb.append(if (comma) delim else "")
+            } else {
+                sb.append(
+                        if (comma) "${delim}${it.toStringWithoutTrailingZeros()}"
+                        else it.toStringWithoutTrailingZeros())
+            }
+            if (!comma) comma = true
+        }
+        sb.append("\n")
+    }
+
+    return sb.toString()
 }
+
+
+private fun Any?.toStringWithoutTrailingZeros(): String {
+    val str = this.toString()
+    val v = str.toDoubleOrNull()
+    return when (v) {
+        null -> str
+        else -> "${v.toInt()}"
+    }
+}
+
 
 private infix fun String.nullIfEqualTo(str: String) = if (this == str) null else this
 
