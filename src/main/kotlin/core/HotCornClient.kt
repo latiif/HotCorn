@@ -84,7 +84,7 @@ class HotCornClient(val write: (Any?) -> Unit = ::println) {
 
         val printAll = "A" in options
         val printEpisodeId = "e" in options || printAll
-        val printCSV = "c" in options || printAll
+        val printCSV = "c" in options
         val getTorrent = "t" in options || printAll
         val printTorrents = "D" in options || printAll
         val printFirstAiredEpoch = "P" in options || printAll
